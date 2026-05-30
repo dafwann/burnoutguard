@@ -387,36 +387,46 @@ export default function DashboardPage() {
           </Card>
 
           <Card>
-            <CardTitle>Wellness ring</CardTitle>
+            <CardTitle>Diagram Wellness</CardTitle>
             <div className="mt-2 h-48">
               <ResponsiveContainer>
-                <RadialBarChart
-                  innerRadius="60%"
-                  outerRadius="100%"
-                  data={[{ name: "score", value: 72, fill: "var(--primary)" }]}
-                  startAngle={90}
-                  endAngle={-270}
-                >
-                  <RadialBar background={{ fill: "var(--primary-light)" }} dataKey="value" cornerRadius={20} />
-                </RadialBarChart>
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: "Gerak", value: 45 },
+                      { name: "Pikiran", value: 78 },
+                      { name: "Istirahat", value: 62 }
+                    ]}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={80}
+                    paddingAngle={4}
+                    dataKey="value"
+                  >
+                    <Cell fill="var(--primary)" />
+                    <Cell fill="var(--mint)" />
+                    <Cell fill="var(--primary-soft)" />
+                  </Pie>
+                  <Tooltip contentStyle={tooltipStyle} />
+                </PieChart>
               </ResponsiveContainer>
             </div>
             <div className="-mt-32 text-center">
               <div className="font-display text-3xl font-bold">72</div>
-              <div className="text-xs text-muted-foreground">Wellness index</div>
+              <div className="text-xs text-muted-foreground">Indeks Wellness</div>
             </div>
             <div className="mt-24 grid grid-cols-3 gap-2 text-center text-xs text-muted-foreground">
-              <div><div className="font-semibold text-foreground">Move</div>45%</div>
-              <div><div className="font-semibold text-foreground">Mind</div>78%</div>
-              <div><div className="font-semibold text-foreground">Rest</div>62%</div>
+              <div><div className="font-semibold text-foreground">Gerak</div>45%</div>
+              <div><div className="font-semibold text-foreground">Pikiran</div>78%</div>
+              <div><div className="font-semibold text-foreground">Istirahat</div>62%</div>
             </div>
           </Card>
-        </div>
 
         {/* Sleep + quote */}
         <div className="grid gap-6 lg:grid-cols-3">
           <Card className="lg:col-span-2">
-            <CardTitle>Sleep consistency</CardTitle>
+            <CardTitle>Konsistensi tidur</CardTitle>
             <div className="mt-4 h-48">
               <ResponsiveContainer>
                 <LineChart data={sleepData}>
@@ -433,7 +443,7 @@ export default function DashboardPage() {
           <Card className="bg-linear-to-br from-mint/50 to-primary-light">
             <Quote className="h-6 w-6 text-primary" />
             <p className="mt-3 font-display text-lg font-semibold leading-snug">
-              "Rest is not the reward for finishing — it's the strategy for starting."
+              "Istirahat itu bukan hadiah karena kamu udah selesai kerja — tapi strategi biar kamu bisa mulai lagi dengan energi penuh."
             </p>
             <div className="mt-2 text-xs text-muted-foreground">Daily reframe</div>
           </Card>
@@ -441,7 +451,7 @@ export default function DashboardPage() {
 
         {/* Recent activity */}
         <Card>
-          <CardTitle>Recent activity</CardTitle>
+          <CardTitle>Aktivitas terkini</CardTitle>
           <ul className="mt-4 divide-y divide-border">
             {history.slice(0, 5).map((h) => (
               <li key={h.date} className="flex items-center justify-between py-3">
