@@ -493,11 +493,11 @@ export default function DashboardPage() {
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Inputs */}
           <div className="space-y-5 rounded-3xl border border-border bg-surface p-6 shadow-soft">
-            <Slider label="Sleep last night" unit="hours" min={3} max={10} step={0.5} value={sleep} onChange={setSleep} />
-            <Slider label="Screen time today" unit="hours" min={1} max={12} step={0.5} value={screen} onChange={setScreen} />
-            <Segmented label="Activity level" value={activity} onChange={setActivity} options={["Sedentary", "Light", "Active"]} />
-            <Segmented label="Assignment workload" value={workload} onChange={setWorkload} options={["Light", "Medium", "Heavy"]} />
-            <Segmented label="How you feel" value={mood} onChange={setMood} options={["Tired", "Okay", "Energized"]} />
+            <Slider label="Durasi tidur" unit="jam" min={3} max={10} step={0.5} value={sleep} onChange={setSleep} />
+            <Slider label="Waktu tatap layar hari ini" unit="jam" min={1} max={12} step={0.5} value={screen} onChange={setScreen} />
+            <Segmented label="Tingkat aktivitas fisik" value={activity} onChange={setActivity} options={["Sedentary", "Light", "Active"]} />
+            <Segmented label="Beban tugas kuliah" value={workload} onChange={setWorkload} options={["Light", "Medium", "Heavy"]} />
+            <Segmented label="Gimana perasaanmu" value={mood} onChange={setMood} options={["Tired", "Okay", "Energized"]} />
             <button
               onClick={compute}
               className="w-full rounded-2xl gradient-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-glow transition hover:opacity-95"
@@ -521,7 +521,7 @@ export default function DashboardPage() {
                     <Sparkles className="h-8 w-8 text-primary" />
                   </div>
                   <p className="mt-4 max-w-xs text-sm text-muted-foreground">
-                    Your result, the contributing factors, and a tiny next step appear here.
+                    Hasil hitungan kalkulator risiko, pemicu utama, dan tips aksi pemulihan instan bakal muncul di sini setelah kamu klik tombol prediksi.
                   </p>
                 </motion.div>
               ) : (
@@ -546,25 +546,25 @@ export default function DashboardPage() {
                           result < 35 ? "var(--success)" : result < 60 ? "var(--warning)" : "var(--danger)",
                       }}
                     >
-                      {result < 35 ? "Low risk" : result < 60 ? "Moderate risk" : "High risk"} · 92% confidence
+                      {result < 35 ? "Risiko Rendah" : result < 60 ? "Risiko Sedang" : "Risiko Tinggi"} · 92% confidence
                     </div>
                   </div>
                   <div className="mt-6 space-y-3">
                     <PredictInsight
-                      title="Sleep is the biggest lever"
-                      body={`At ${sleep}h, you're below your 7h baseline. Each extra hour reduces predicted risk by ~9%.`}
+                      title="Tidur adalah kunci utama"
+                      body={`Dengan durasi ${sleep} jam, kamu masih di bawah standar minimal 7 jam. Tiap tambahan 1 jam tidur terbukti bisa memangkas risiko burnout sampai ~9%.`}
                     />
                     <PredictInsight
-                      title="Late screen exposure"
-                      body={`${screen}h of screens — try a 30-min phone-free wind-down to lower stress hormones.`}
+                      title="Paparan gadget terlalu lama"
+                      body={`Waktu tatap layar menyentuh ${screen} jam — yuk coba luangkan waktu 30 menit tanpa HP sebelum tidur biar tidurmu lebih nyenyak.`}
                     />
                     <PredictInsight
-                      title="One thing tonight"
-                      body="Pick a stop-time for your phone. Even 24 hours of consistency moves the score."
+                      title="Satu hal kecil malam ini"
+                      body="Tentukan jam malam buat matiin koneksi HP. Konsisten melakukan ini selama 24 jam ke depan bakal langsung memperbaiki skor energimu besok."
                     />
                   </div>
                   <button className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3 text-sm font-semibold text-background">
-                    Add this to my recovery plan <ArrowRight className="h-4 w-4" />
+                    Masukkan ke rencana pemulihanku <ArrowRight className="h-4 w-4" />
                   </button>
                 </motion.div>
               )}
@@ -577,8 +577,8 @@ export default function DashboardPage() {
 
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="font-display text-3xl font-bold">Patterns under the surface.</h2>
-            <p className="mt-1 text-sm text-muted-foreground">What your week is actually telling us.</p>
+            <h2 className="font-display text-3xl font-bold">Pola tersembunyi di balik aktivitasmu.</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Apa yang grafik mingguan coba kasih tahu ke kamu.</p>
           </div>
           <div className="flex gap-1 rounded-full bg-accent p-1">
             {(["week", "month"] as const).map((r) => (
@@ -589,7 +589,7 @@ export default function DashboardPage() {
                   range === r ? "bg-surface shadow-soft" : "text-muted-foreground"
                 }`}
               >
-                {r}
+                {r === "week" ? "Minggu Ini" : "Bulan Ini"}
               </button>
             ))}
           </div>
@@ -598,7 +598,7 @@ export default function DashboardPage() {
         {/* Burnout vs focus + AI insight */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="rounded-3xl border border-border bg-surface p-6 shadow-soft lg:col-span-2">
-            <div className="text-sm font-semibold">Burnout vs focus over time</div>
+            <div className="text-sm font-semibold">Tren Burnout vs Tingkat Fokus</div>
             <div className="mt-4 h-72">
               <ResponsiveContainer>
                 <LineChart data={stressTrend}>
@@ -614,15 +614,14 @@ export default function DashboardPage() {
           </div>
 
           <div className="rounded-3xl border border-border bg-linear-to-br from-primary-light to-mint/40 p-6 shadow-soft">
-            <div className="text-xs font-medium uppercase tracking-widest text-primary">AI insight</div>
-            <h3 className="mt-2 font-display text-xl font-bold leading-snug">Wednesdays carry the load.</h3>
+            <div className="text-xs font-medium uppercase tracking-widest text-primary">Temuan AI</div>
+            <h3 className="mt-2 font-display text-xl font-bold leading-snug">Hari Rabu adalah titik terberatmu.</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Stress peaks mid-week, then sleep recovers it. Front-loading deep work to Mon/Tue could
-              cut Wednesday spikes by ~22%.
+              Tingkat stresmu memuncak di tengah minggu, lalu pulih pas jam tidurmu membaik. Memaksimalkan fokus tugas di hari Senin/Selasa bisa mengurangi lonjakan stres hari Rabu sebesar ~22%.
             </p>
             <div className="mt-4 flex gap-2 text-xs">
-              <Pill>Pattern</Pill>
-              <Pill>Confidence 88%</Pill>
+              <Pill>Karakter Data</Pill>
+              <Pill>Akurasi Analisis 88%</Pill>
             </div>
           </div>
         </div>
@@ -630,7 +629,7 @@ export default function DashboardPage() {
         {/* Radar + pie + heatmap */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="rounded-3xl border border-border bg-surface p-6 shadow-soft">
-            <div className="text-sm font-semibold">Wellness radar</div>
+            <div className="text-sm font-semibold">Radar Keseimbangan</div>
             <div className="mt-2 h-64">
               <ResponsiveContainer>
                 <RadarChart data={radarData}>
@@ -643,7 +642,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="rounded-3xl border border-border bg-surface p-6 shadow-soft">
-            <div className="text-sm font-semibold">Time mix</div>
+            <div className="text-sm font-semibold">Alokasi Waktu Aktivitas</div>
             <div className="mt-2 h-64">
               <ResponsiveContainer>
                 <PieChart>
@@ -660,7 +659,9 @@ export default function DashboardPage() {
               {habitMix.map((h, i) => (
                 <div key={h.name} className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full" style={{ background: COLORS[i] }} />
-                  <span className="text-muted-foreground">{h.name}</span>
+                  <span className="text-muted-foreground">
+                    {h.name === "Study" ? "Belajar" : h.name === "Rest" ? "Istirahat" : "Nongkrong"}
+                  </span>
                   <span className="ml-auto font-semibold">{h.value}%</span>
                 </div>
               ))}
@@ -668,7 +669,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="rounded-3xl border border-border bg-surface p-6 shadow-soft">
-            <div className="text-sm font-semibold">Heatmap · last 4 weeks</div>
+            <div className="text-sm font-semibold">Kalender Pemantauan · 4 Minggu Terakhir</div>
             <div className="mt-4 grid grid-cols-7 gap-1.5">
               {Array.from({ length: 28 }).map((_, i) => {
                 const v = Math.round(20 + ((i * 37 + 13) % 70));
@@ -685,15 +686,15 @@ export default function DashboardPage() {
               })}
             </div>
             <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-              <span>Less</span>
-              <span>More burnout</span>
+              <span>Tenang</span>
+              <span>Sangat Burnout</span>
             </div>
           </div>
         </div>
 
         {/* Triggers */}
         <div className="rounded-3xl border border-border bg-surface p-6 shadow-soft">
-          <div className="text-sm font-semibold">Triggers that affect you most</div>
+          <div className="text-sm font-semibold">Faktor Pemicu Stres Paling Berpengaruh</div>
           <div className="mt-4 space-y-3">
             {[
               { label: "Late screen time", weight: 78 },
@@ -704,7 +705,9 @@ export default function DashboardPage() {
             ].map((t) => (
               <div key={t.label}>
                 <div className="flex justify-between text-xs">
-                  <span className="font-medium">{t.label}</span>
+                  <span className="font-medium">
+                    {t.label === "Late screen time" ? "Main gadget kemalaman" : t.label === "Sleep < 6h" ? "Waktu tidur kurang dari 6 jam" : t.label === "Skipped meals" ? "Sering skip/telat makan" : t.label === "No outdoor time" ? "Kurang jalan-jalan keluar" : "Ngemil kafein kemalaman"}
+                  </span>
                   <span className="text-muted-foreground tabular-nums">{t.weight}%</span>
                 </div>
                 <div className="mt-1 h-2 overflow-hidden rounded-full bg-primary-light">
@@ -723,14 +726,13 @@ export default function DashboardPage() {
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary opacity-10 blur-3xl animate-blob" />
           <div className="relative">
             <div className="inline-flex items-center gap-2 rounded-full bg-surface/80 px-3 py-1 text-xs font-semibold text-primary backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5" /> Updated this morning
+              <Sparkles className="h-3.5 w-3.5" /> Diperbarui Pagi Ini
             </div>
             <h2 className="mt-3 max-w-2xl font-display text-3xl font-bold leading-tight">
-              You're carrying more than you think — but the pattern is fixable.
+              Beban yang kamu bawa emang berat — tapi polanya masih bisa diperbaiki kok.
             </h2>
             <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-              Based on the last 21 days, your model has high confidence in three behavior loops. Each
-              has a small lever you can pull this week.
+              Berdasarkan analisis data 21 hari terakhir, AI mendeteksi kebiasaan berulang yang kurang sehat. Tenang, ada langkah kecil buat mengatasinya minggu ini.
             </p>
           </div>
         </div>
@@ -761,33 +763,33 @@ export default function DashboardPage() {
         <div className="grid gap-6 lg:grid-cols-3">
           <FocusCard
             icon={<Brain className="h-5 w-5" />}
-            title="Focus analysis"
+            title="Analisis Fokus Kerja"
             value="6.2 / 10"
-            body="You hit deep work in 3-of-5 sessions this week — best on Tuesday mornings."
+            body="Kamu berhasil masuk mode fokus penuh di 3 dari 5 sesi minggu ini — paling maksimal di Selasa pagi."
           />
           <FocusCard
             icon={<Target className="h-5 w-5" />}
-            title="Productivity balance"
+            title="Keseimbangan Produktivitas"
             value="On track"
-            body="Effort allocation looks healthy: 64% study, 18% rest, 18% social."
+            body="Pembagian energimu lumayan sehat: 64% belajar kuliah, 18% istirahat, dan 18% relasi sosial."
           />
           <FocusCard
             icon={<Heart className="h-5 w-5" />}
-            title="Emotional pattern"
-            value="Calm-anxious cycle"
-            body="Mood drops 4–6pm before evening study blocks. A short walk between can break it."
+            title="Siklus Kondisi Emosional"
+            value="Siklus Tenang-Cemas"
+            body="Suasana hatimu cenderung drop jam 4–6 sore sebelum masuk jam belajar malam. Jalan santai bisa memutus siklus ini."
           />
         </div>
 
         {/* Suggested actions */}
         <Card>
-          <div className="text-sm font-semibold">Suggested actions for this week</div>
+          <div className="text-sm font-semibold">Saran Tindakan Untuk Minggu Ini</div>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {[
-              "Cap caffeine at 2pm Mon–Fri",
-              "Block 9–10pm as phone-free wind-down",
-              "Two 25-min focus blocks before lunch",
-              "One in-person social activity",
+              "Batasi minum kopi/kafein maksimal jam 2 siang (Sen–Jum)",
+              "Pasang alarm pengingat mati HP jam 9–10 malam buat bersantai",
+              "Selesaikan dua blok fokus belajar 25 menit sebelum makan siang",
+              "Luangkan waktu minimal satu kali buat nongkrong seru bareng teman",
             ].map((a) => (
               <label
                 key={a}
