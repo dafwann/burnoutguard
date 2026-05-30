@@ -291,14 +291,29 @@ export default function DashboardPage() {
       <Topbar title="Dashboard" />
       <div className="mx-auto max-w-7xl space-y-6 p-4 md:p-8">
 
+        {/* 🔥 Streak Bar Komponen Visual */}
+        <div className="rounded-3xl border border-border bg-surface p-5 shadow-soft">
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-semibold">🔥 Streak Check-in</div>
+            <div className="rounded-full bg-primary-light px-3 py-1 text-xs font-bold text-primary">9 hari beruntun!</div>
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">Kamu udah menjaga kesehatan mentalmu selama 9 hari berturut-turut. Keren, pertahankan! 💪</p>
+        </div>
+
+        {/* 🌱 Quotes Penyemangat */}
+        <div className="rounded-2xl bg-linear-to-br from-mint/50 to-primary-light p-4">
+          <p className="text-sm font-semibold text-primary italic">"Nggak apa-apa buat pelan sejenak. Kamu bukan robot, recharge energi itu juga bagian dari progres kerja kok! ✨"</p>
+          <div className="mt-1 text-xs text-muted-foreground">Motivasi Hari Ini 💫</div>
+        </div>
+        
         {/* ══════════ SECTION: TODAY'S OVERVIEW ══════════ */}
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-sm text-muted-foreground">Good evening, Maya</p>
-            <h2 className="font-display text-3xl font-bold">Here's how this week feels.</h2>
+            <p className="text-sm text-muted-foreground">Halo Maya, gimana hari ini? 👋</p>
+            <h2 className="font-display text-3xl font-bold">Ini kondisi kamu minggu ini.</h2>
           </div>
           <div className="rounded-full border border-border bg-surface px-4 py-1.5 text-xs font-medium text-muted-foreground">
-            Updated 2 min ago
+            Diperbarui 2 menit lalu
           </div>
         </div>
 
@@ -312,15 +327,14 @@ export default function DashboardPage() {
             <div className="flex flex-wrap items-center justify-between gap-6">
               <div>
                 <div className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                  Today's burnout score
+                  Skor burnout hari ini
                 </div>
-                <h3 className="mt-2 font-display text-4xl font-bold">Steady, not safe.</h3>
+                <h3 className="mt-2 font-display text-4xl font-bold">Stabil, tapi tetap waspada.</h3>
                 <p className="mt-2 max-w-md text-sm text-muted-foreground">
-                  Sleep dipped 11% and screen time rose late. A 30-minute wind-down tonight could
-                  lower tomorrow's risk by 18%.
+                  Tidurmu turun 11% dan screen time naik malam-malam. Coba wind-down 30 menit malam ini, bisa turunin risiko esok hari sebesar 18%.
                 </p>
                 <button className="mt-4 inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-background">
-                  Open recovery plan <ArrowUpRight className="h-4 w-4" />
+                  Buka rencana pemulihanku <ArrowUpRight className="h-4 w-4" />
                 </button>
               </div>
               <ScoreRing value={burnoutScore} />
@@ -328,7 +342,7 @@ export default function DashboardPage() {
           </motion.div>
 
           <Card>
-            <CardTitle icon={<Sparkles className="h-4 w-4" />}>AI recommendation</CardTitle>
+            <CardTitle icon={<Sparkles className="h-4 w-4" />}>Rekomendasi AI buat kamu</CardTitle>
             <ul className="mt-4 space-y-3">
               {recommendations.slice(0, 3).map((r) => (
                 <li key={r.title} className="flex items-start justify-between gap-3 rounded-2xl bg-accent/60 p-3">
