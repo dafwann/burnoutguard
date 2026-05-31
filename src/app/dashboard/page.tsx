@@ -208,6 +208,16 @@ function Segmented({
   onChange: (v: string) => void;
   options: string[];
 }) {
+  const displayLabels: Record<string, string> = {
+    Sedentary: "Jarang Gerak",
+    Light: "Santai",
+    Active: "Aktif",
+    Medium: "Sedang",
+    Heavy: "Padat",
+    Tired: "Lelah",
+    Okay: "Biasa Aja",
+    Energized: "Semangat"
+  };
   return (
     <div>
       <label className="text-sm font-semibold">{label}</label>
@@ -220,7 +230,7 @@ function Segmented({
               value === o ? "bg-surface shadow-soft text-foreground" : "text-muted-foreground"
             }`}
           >
-            {o}
+            {displayLabels[o] || o}
           </button>
         ))}
       </div>
