@@ -4,8 +4,6 @@ import { NextResponse, type NextRequest } from "next/server";
 const PROTECTED_PATHS = [
   "/dashboard",
   "/predict",
-  "/history",
-  "/insights",
   "/settings",
 ];
 
@@ -51,11 +49,14 @@ export async function proxy(request: NextRequest) {
   );
 
   if (isProtected && !user) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(
+      new URL("/login", request.url)
+    );
   }
 
   if (
-    (pathname === "/login" || pathname === "/register") &&
+    (pathname === "/login" ||
+      pathname === "/register") &&
     user
   ) {
     return NextResponse.redirect(
@@ -67,5 +68,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|api).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|api).*)",
+  ],
 };
