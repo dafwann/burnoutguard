@@ -376,7 +376,7 @@ export default function DashboardPage() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid stroke="var(--border)" vertical={false} />
-                  <XAxis dataKey="day" stroke="var(--muted-foreground)" fontSize={12} />
+                  <XAxis dataKey="day" tickFormatter={(d) => d === "Mon" ? "Sen" : d === "Tue" ? "Sel" : d === "Wed" ? "Rab" : d === "Thu" ? "Kam" : d === "Fri" ? "Jum" : d === "Sat" ? "Sab" : "Min"} stroke="var(--muted-foreground)" fontSize={12} />
                   <YAxis stroke="var(--muted-foreground)" fontSize={12} />
                   <Tooltip contentStyle={tooltipStyle} />
                   <Area type="monotone" dataKey="focus" stroke="var(--primary)" fill="url(#g1)" strokeWidth={2.5} />
@@ -421,7 +421,7 @@ export default function DashboardPage() {
               <ResponsiveContainer>
                 <LineChart data={sleepData}>
                   <CartesianGrid stroke="var(--border)" vertical={false} />
-                  <XAxis dataKey="day" stroke="var(--muted-foreground)" fontSize={12} />
+                  <XAxis dataKey="day" tickFormatter={(d) => d === "Mon" ? "Sen" : d === "Tue" ? "Sel" : d === "Wed" ? "Rab" : d === "Thu" ? "Kam" : d === "Fri" ? "Jum" : d === "Sat" ? "Sab" : "Min"} stroke="var(--muted-foreground)" fontSize={12} />
                   <YAxis domain={[4, 9]} stroke="var(--muted-foreground)" fontSize={12} />
                   <Tooltip contentStyle={tooltipStyle} />
                   <Line type="monotone" dataKey="hours" stroke="var(--primary)" strokeWidth={3} dot={{ r: 5, fill: "var(--primary)" }} />
@@ -603,7 +603,7 @@ export default function DashboardPage() {
               <ResponsiveContainer>
                 <LineChart data={stressTrend}>
                   <CartesianGrid stroke="var(--border)" vertical={false} />
-                  <XAxis dataKey="day" stroke="var(--muted-foreground)" fontSize={12} />
+                  <XAxis dataKey="day" tickFormatter={(d) => d === "Mon" ? "Sen" : d === "Tue" ? "Sel" : d === "Wed" ? "Rab" : d === "Thu" ? "Kam" : d === "Fri" ? "Jum" : d === "Sat" ? "Sab" : "Min"} stroke="var(--muted-foreground)" fontSize={12} />
                   <YAxis stroke="var(--muted-foreground)" fontSize={12} />
                   <Tooltip contentStyle={tooltipStyle} />
                   <Line type="monotone" dataKey="stress" stroke="var(--danger)" strokeWidth={3} dot={false} />
