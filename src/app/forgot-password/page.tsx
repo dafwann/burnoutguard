@@ -1,28 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-
 import Link from 'next/link'
+import { HeartPulse } from 'lucide-react'
 
 import { createClient } from '@/lib/supabase'
-
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-
 import { useToast } from '@/hooks/use-toast'
+import { GradientBlobs } from '@/components/visual/GradientBlobs'
 
 export default function ForgotPasswordPage() {
   const supabase = createClient()
-
   const { toast } = useToast()
 
   const [email, setEmail] = useState('')
@@ -33,12 +20,12 @@ export default function ForgotPasswordPage() {
 
     setLoading(true)
 
-    const { error } = await supabase.auth.resetPasswordForEmail(
-      email,
-      {
-        redirectTo: `${window.location.origin}/reset-password`,
-      }
-    )
+    const SITE_URL =
+      process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${SITE_URL}/reset-password`,
+    })
 
     if (error) {
       toast({
@@ -48,8 +35,8 @@ export default function ForgotPasswordPage() {
       })
     } else {
       toast({
-        title: 'Reset email sent',
-        description: 'Check your inbox',
+        title: 'Reset email terkirim',
+        description: 'Cek inbox kamu',
       })
     }
 
@@ -57,57 +44,62 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">
-            Reset your password
-          </CardTitle>
+    <div className="relative min-h-screen overflow-x-hidden bg-background">
+      <GradientBlobs />
 
-          <CardDescription>
-            We’ll send you a reset link
-          </CardDescription>
-        </CardHeader>
+      <div className="relative flex min-h-screen items-start justify-center px-4 pt-16 sm:items-center sm:pt-10">
+        <div className="glass w-full max-w-md rounded-3xl p-6 sm:p-8">
 
-        <CardContent>
-          <form
-            onSubmit={handleReset}
-            className="space-y-4"
-          >
-            <div className="space-y-2">
-              <Label>Email</Label>
+          {/* Logo */}
+          <Link href="/" className="mb-6 flex items-center gap-2">
+            <div className="grid h-8 w-8 place-items-center rounded-xl gradient-primary text-primary-foreground">
+              <HeartPulse className="h-4 w-4" />
+            </div>
+            <span className="font-display text-base font-bold">
+              BurnoutGuard
+            </span>
+          </Link>
 
-              <Input
+          <h1 className="font-display text-2xl font-bold">
+            Reset password
+          </h1>
+
+          <p className="mt-1 text-sm text-muted-foreground">
+            Kami akan mengirimkan link reset ke email kamu.
+          </p>
+
+          <form onSubmit={handleReset} className="mt-6 space-y-4">
+
+            <label className="block">
+              <div className="text-xs font-semibold">Email</div>
+              <input
                 type="email"
                 placeholder="you@uni.edu"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1.5 w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none transition focus:border-primary focus:shadow-glow"
                 required
               />
-            </div>
+            </label>
 
-            <Button
+            <button
               type="submit"
-              className="w-full"
               disabled={loading}
+              className="w-full rounded-2xl gradient-primary py-3 text-sm font-semibold text-primary-foreground shadow-glow transition hover:opacity-95 disabled:opacity-50"
             >
-              {loading
-                ? 'Sending...'
-                : 'Send reset link'}
-            </Button>
+              {loading ? 'Mengirim...' : 'Kirim link reset'}
+            </button>
+
+            <div className="text-center text-xs text-muted-foreground">
+              Ingat password?{' '}
+              <Link href="/login" className="font-semibold text-foreground">
+                Masuk
+              </Link>
+            </div>
           </form>
 
-          <div className="text-center text-xs text-muted-foreground mt-4">
-            Remembered?{' '}
-            <Link
-              href="/login"
-              className="font-semibold text-foreground"
-            >
-              Sign in
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    </main>
+        </div>
+      </div>
+    </div>
   )
 }
