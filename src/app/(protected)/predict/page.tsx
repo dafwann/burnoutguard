@@ -4,11 +4,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Brain, Sparkles, Save, AlertCircle, CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
-import Lottie from "lottie-react";
-
-import relaxed from "@/public/lottie/relaxed.json";
-import medium from "@/public/lottie/medium.json";
-import stress from "@/public/lottie/stress.json";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 interface PredictionResult {
