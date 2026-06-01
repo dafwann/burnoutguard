@@ -10,10 +10,12 @@ import { useState } from "react";
 function MarketingNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  return (
-    <header className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[min(720px,calc(100%-1.5rem))]">
+return (
+  <header className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[min(720px,calc(100%-1.5rem))]">
+    <div className="relative">
       <div className="flex items-center justify-between gap-2 rounded-full border border-border bg-surface/80 px-4 py-2.5 shadow-float backdrop-blur-md">
-        {/* Logo — selalu tampil */}
+        
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <div className="grid h-8 w-8 place-items-center rounded-xl gradient-primary text-primary-foreground">
             <HeartPulse className="h-4 w-4" />
@@ -24,51 +26,112 @@ function MarketingNav() {
           </span>
         </Link>
 
-        {/* Nav links — sembunyikan di mobile agar tidak overflow */}
+        {/* Desktop Nav */}
         <nav className="hidden sm:flex items-center gap-4 text-sm font-medium text-muted-foreground">
-          <Link href="/" className="hover:text-foreground transition">
+          <Link
+            href="/"
+            className={
+              typeof window !== "undefined" && window.location.pathname === "/"
+                ? "text-foreground font-semibold"
+                : "hover:text-foreground transition"
+            }
+          >
             Beranda
           </Link>
-          <Link href="/about" className="hover:text-foreground transition">
+
+          <Link
+            href="/about"
+            className={
+              typeof window !== "undefined" && window.location.pathname === "/about"
+                ? "text-foreground font-semibold"
+                : "hover:text-foreground transition"
+            }
+          >
             Tentang
           </Link>
         </nav>
 
-        {/* Buttons — "Masuk" hanya tampil sm ke atas */}
-        <div className="flex items-center gap-2 shrink-0">
-          {/* Desktop */}
-          <div className="hidden sm:flex items-center gap-2">
+        {/* Desktop Buttons */}
+        <div className="hidden sm:flex items-center gap-2">
+          <Link
+            href="/login"
+            className="rounded-full border border-border bg-surface px-4 py-1.5 text-sm font-semibold hover:bg-accent transition"
+          >
+            Masuk
+          </Link>
+
+          <Link
+            href="/register"
+            className="rounded-full gradient-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground shadow-glow hover:opacity-90 transition"
+          >
+            Mulai Gratis
+          </Link>
+        </div>
+
+        {/* Mobile Hamburger */}
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="sm:hidden rounded-full p-2 hover:bg-accent"
+        >
+          {mobileOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
+        </button>
+      </div>
+
+      {/* Mobile Dropdown */}
+      {mobileOpen && (
+        <div className="absolute left-0 right-0 top-full mt-2 rounded-2xl border border-border bg-surface p-4 shadow-float backdrop-blur sm:hidden">
+          <nav className="flex flex-col gap-3">
+            <Link
+              href="/"
+              onClick={() => setMobileOpen(false)}
+              className={
+                typeof window !== "undefined" && window.location.pathname === "/"
+                  ? "font-semibold text-primary"
+                  : "font-medium"
+              }
+            >
+              Beranda
+            </Link>
+
+            <Link
+              href="/about"
+              onClick={() => setMobileOpen(false)}
+              className={
+                typeof window !== "undefined" && window.location.pathname === "/about"
+                  ? "font-semibold text-primary"
+                  : "font-medium"
+              }
+            >
+              Tentang
+            </Link>
+
+            <div className="h-px bg-border" />
+
             <Link
               href="/login"
-              className="rounded-full border border-border bg-surface px-4 py-1.5 text-sm font-semibold hover:bg-accent transition"
+              onClick={() => setMobileOpen(false)}
+              className="rounded-xl border border-border px-4 py-2 text-center font-medium"
             >
               Masuk
             </Link>
 
             <Link
               href="/register"
-              className="rounded-full gradient-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground shadow-glow hover:opacity-90 transition"
+              onClick={() => setMobileOpen(false)}
+              className="rounded-xl gradient-primary px-4 py-2 text-center font-semibold text-primary-foreground"
             >
               Mulai Gratis
             </Link>
-          </div>
-
-          {/* Mobile Hamburger */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="sm:hidden rounded-full p-2 hover:bg-accent"
-          >
-            {mobileOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </button>
+          </nav>
         </div>
-      </div>
-
-    </header>
-  );
+      )}
+    </div>
+  </header>
+);
 }
 
 // ── Marketing Footer ───────────────────────────────────────────────────────────

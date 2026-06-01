@@ -6,9 +6,9 @@ import { LayoutDashboard, Brain, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/predict",   label: "Predict",   icon: Brain           },
-  { to: "/settings",  label: "Settings",  icon: Settings        },
+  { to: "/dashboard", label: "Dasbor", icon: LayoutDashboard },
+  { to: "/predict",   label: "Prediksi",   icon: Brain           },
+  { to: "/settings",  label: "Pengaturan",  icon: Settings        },
 ] as const;
 
 export function MobileTabBar() {
