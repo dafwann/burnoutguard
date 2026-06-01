@@ -275,9 +275,8 @@ export default function Home() {
             </h1>
 
             <p className="mt-4 max-w-lg text-sm text-muted-foreground sm:mt-5 sm:text-base md:text-lg">
-              BurnoutGuard membaca sinyal kecil — tidur, layar, suasana hati,
-              beban kerja — dan memberitahumu apa yang sebenarnya terjadi. Tanpa
-              ceramah. Hanya satu langkah kecil untuk dicoba hari ini.
+BurnoutGuard membaca pola harianmu—tidur, screen time, mood, dan beban kerja—untuk menunjukkan apa yang sebenarnya memengaruhi kondisimu. Hanya satu langkah kecil yang relevan untuk dicoba hari ini.
+
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3 sm:mt-7">
@@ -295,13 +294,6 @@ export default function Home() {
               >
                 Lihat dashboard
               </Link>
-            </div>
-
-            {/* Trust badges — wrap otomatis di mobile */}
-            <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-muted-foreground sm:mt-8 sm:gap-5">
-              <Trust label="Digunakan di 40+ universitas" />
-              <Trust label="Selaras GDPR · FERPA" />
-              <Trust label="Data tidak pernah dijual" />
             </div>
           </motion.div>
 

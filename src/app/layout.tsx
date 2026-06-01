@@ -9,11 +9,15 @@ import { Toaster } from 'sonner'
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
+  display: 'swap',   // ← tambahkan ini
+  preload: true,
 })
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-display',
+  display: 'swap',   // ← tambahkan ini
+  preload: true,
 })
 
 export const metadata: Metadata = {
