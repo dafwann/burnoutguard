@@ -515,8 +515,12 @@ export default function DashboardPage() {
                   />
                   <Tooltip
                     contentStyle={tip}
-                    formatter={(v: number) =>
-                      v === 1 ? "Rendah" : v === 2 ? "Sedang" : "Tinggi"
+                    formatter={(v) =>
+                      Number(v) === 1
+                        ? "Rendah"
+                        : Number(v) === 2
+                        ? "Sedang"
+                        : "Tinggi"
                     }
                   />
                   <Area
@@ -636,7 +640,10 @@ export default function DashboardPage() {
                   fontSize={11}
                   width={36}
                 />
-                <Tooltip contentStyle={tip} formatter={(v: number) => [`${v}%`, "Rata-rata"]} />
+                <Tooltip
+                  contentStyle={tip}
+                  formatter={(v) => [`${Number(v)}%`, "Rata-rata"]}
+                />
                 <Bar dataKey="nilai" radius={[8, 8, 0, 0]}>
                   {[
                     { fill: "var(--success)" },
@@ -758,8 +765,8 @@ export default function DashboardPage() {
                     </Pie>
                     <Tooltip
                       contentStyle={tip}
-                      formatter={(v: number, _name: string, entry: any) => [
-                        `${v}% (${entry.payload.value.toFixed(1)} jam)`,
+                      formatter={(v, _name, entry: any) => [
+                        `${Number(v)}% (${entry.payload.value.toFixed(1)} jam)`,
                         entry.payload.name,
                       ]}
                     />
