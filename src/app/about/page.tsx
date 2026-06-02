@@ -136,7 +136,7 @@ function MarketingFooter() {
         <div>
           <div className="font-display text-base font-bold">BurnoutGuard</div>
           <p className="mt-1 text-xs text-muted-foreground max-w-xs">
-            Deteksi dini risiko burnout mahasiswa dengan kecerdasan buatan.
+            Bantu deteksi dini risiko burnout berbasis AI.
           </p>
         </div>
         <p className="text-xs text-muted-foreground">
@@ -226,17 +226,17 @@ const FEATURES = [
   {
     icon: HeartPulse,
     title: "Input Form Gaya Hidup",
-    body: "Formulir input data pengguna meliputi jam tidur, screen time, jam belajar, skor mood, dan aktivitas fisik harian.",
+    body: "Pengguna dapat mengisi data harian seperti jam tidur, screen time, jam belajar, tingkat kecemasan dan lainnya.",
   },
   {
     icon: Brain,
     title: "Prediksi AI Akurat",
-    body: "Model Deep Learning berbasis TensorFlow mengklasifikasikan risiko burnout ke tiga level: Rendah, Sedang, dan Tinggi — dengan target akurasi minimal 85%.",
+    body: "Model Deep Learning berbasis TensorFlow yang mengelompokkan risiko burnout ke tiga level: Rendah, Sedang, dan Tinggi — dengan target akurasi minimal 85%.",
   },
   {
     icon: Sparkles,
     title: "Rekomendasi Actionable",
-    body: "Sistem memberikan saran konkret seperti \"kurangi screen time 30 menit sebelum tidur\" atau \"tingkatkan waktu tidur\", bukan sekadar angka.",
+    body: "Sistem memberikan saran konkret seperti \"kurangi screen time 30 menit sebelum tidur\" atau \"tingkatkan waktu tidur\", bukan hanya angka.",
   },
   {
     icon: BarChart2,
@@ -246,7 +246,7 @@ const FEATURES = [
   {
     icon: ShieldCheck,
     title: "Privasi & Keamanan",
-    body: "Data pengguna dikelola dengan aman menggunakan Supabase. Tidak ada data yang dijual atau dibagikan ke pihak ketiga.",
+    body: "Data pengguna dikelola dengan aman. Tidak ada data yang dijual atau dibagikan ke pihak ketiga.",
   },
   {
     icon: Users,
@@ -284,9 +284,9 @@ export default function AboutPage() {
           </h1>
 
           <p className="mt-4 mx-auto max-w-2xl text-sm text-muted-foreground sm:mt-5 sm:text-base md:text-lg">
-            Sistem deteksi dini risiko kesehatan mental mahasiswa berbasis AI —
-            membantu mahasiswa Indonesia mengenali burnout sebelum kondisinya
-            memburuk.
+            BurnoutGuard adalah sistem deteksi dini risiko burnout berbasis AI yang membantu
+            mahasiswa mengenali tanda-tanda kelelahan mental sejak awal sebelum berdampak
+            lebih jauh pada aktivitas sehari-hari.
           </p>
 
           {/* Badge tema — wrap di mobile */}
@@ -363,7 +363,7 @@ export default function AboutPage() {
         >
           <SectionLabel>Fitur Utama</SectionLabel>
           <h2 className="mt-2 font-display text-2xl font-bold sm:text-3xl">
-            Apa yang bisa BurnoutGuard lakukan?
+            Apa saja yang dapat dilakukan BurnoutGuard? {/* ── atau mau ambil yang ini? : Fitur yang tersedia di BurnoutGuard ── */}
           </h2>
 
           {/* 1 kolom mobile → 2 kolom sm → 3 kolom lg */}
@@ -399,8 +399,8 @@ export default function AboutPage() {
             6 orang, 3 keahlian, satu tujuan
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Tim multidisiplin dari jalur AI Engineer, Data Science, dan
-            Full-Stack Web Developer.
+            BurnoutGuard dikembangkan oleh tim yang terdiri dari anggota dengan keahlian di
+            bidang AI Engineering, Data Science, dan Full-Stack Web Development.
           </p>
 
           {/* 1 kolom mobile → 2 kolom sm → 3 kolom lg */}
