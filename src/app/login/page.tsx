@@ -58,10 +58,10 @@ export default function LoginPage() {
           </Link>
 
           <h2 className="mt-10 font-display text-4xl font-bold leading-tight">
-            Kenali burnout-mu sebelum jadi berbahaya.
+            Kenali risiko burnout sebelum berdampak lebih jauh.
           </h2>
           <p className="mt-3 max-w-md text-muted-foreground">
-            Masuk untuk melihat skor terbaru, insight, dan langkah kecil berikutnya.
+            Masuk kembali untuk melihat pola aktivitas harianmu dan temukan langkah kecil untuk memulihkan energimu.
           </p>
           <div className="mt-8">
             <MeditationIllustration className="w-full max-w-md" />
