@@ -162,10 +162,10 @@ function StreakWidget({ records }: { records: PredictionRecord[] }) {
       </div>
       <p className="mt-1 text-xs text-muted-foreground">
         {streak === 0
-          ? "Mulai prediksi hari ini untuk membangun streak!"
+          ? "Yuk, check-in kondisimu hari ini untuk menjaga rutinitas rawat dirimu!"
           : streak === 7
-          ? "Sempurna! Kamu aktif selama 7 hari berturut-turut 🎉"
-          : `${7 - streak} hari lagi untuk streak sempurna minggu ini.`}
+          ? "Luar biasa! Kamu berhasil menjaga rutinitas check-in selama 7 hari penuh 🎉"
+          : `${7 - streak} hari check-in lagi untuk melengkapi catatan minggu ini.`}
       </p>
     </Card>
   );
@@ -351,7 +351,7 @@ export default function DashboardPage() {
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                  Prediksi Terakhir
+                  Hasil Prediksi Terakhir
                 </div>
                 <div className="mt-2 flex items-center gap-3 flex-wrap">
                   <h3 className="font-display text-3xl font-bold sm:text-4xl">
@@ -360,7 +360,7 @@ export default function DashboardPage() {
                   <RiskBadge level={latest.prediction} />
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Kepercayaan model:{" "}
+                  Tingkat Akurasi Analisis:{" "}
                   <strong>{Math.round(latest.confidence * 100)}%</strong>
                 </p>
                 {/* Probability bars — min-w-0 cegah overflow */}
