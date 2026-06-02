@@ -61,15 +61,6 @@ const FIELD_META: {
   { key: "Anxiety_Level", label: "Tingkat Kecemasan", min: 0, max: 10, hint: "skala 0–10" },
 ];
 
-// Default values injected silently (not shown in UI)
-const HIDDEN_DEFAULTS = {
-  Gender: "Male",
-  Tuition: "No",
-  Physical_Exercise: "No",
-  Family_Income_Level: "Low",
-  University_Type: "National University",
-};
-
 // ── Helpers ────────────────────────────────────────────────────────────────────
 const riskLabel = (level: string) => {
   if (level === "Low") return "Rendah";
@@ -304,16 +295,21 @@ export default function PredictPage() {
       Peer_Pressure: parseInt(form.Peer_Pressure),
       Family_Support: parseInt(form.Family_Support),
       Anxiety_Level: parseInt(form.Anxiety_Level),
-      ...HIDDEN_DEFAULTS,
     };
 
     try {
-      const res = await fetch("https://dielnich-burnoutguard-api.hf.space/predict", {
+      const res = await fetch("/api/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+      if (!res.ok) {
+        const errData = await res.json();
+
+        throw new Error(
+          errData.error || `Server error ${res.status}`
+        );
+      }
       const data: PredictionResult = await res.json();
       setResult(data);
 
