@@ -142,7 +142,7 @@ function MarketingFooter() {
         <div>
           <div className="font-display text-base font-bold">BurnoutGuard</div>
           <p className="mt-1 text-xs text-muted-foreground max-w-xs">
-            Deteksi dini risiko burnout mahasiswa dengan kecerdasan buatan.
+            Bantu deteksi dini risiko burnout berbasis AI.
           </p>
         </div>
         <p className="text-xs text-muted-foreground">
@@ -210,7 +210,7 @@ function HeroBurnoutCard() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-          Prediksi Terakhir
+          Hasil Prediksi Terakhir
         </div>
         <div className="rounded-full bg-mint/40 px-2.5 py-0.5 text-xs font-semibold text-success">
           Live
@@ -236,7 +236,7 @@ function HeroBurnoutCard() {
           </div>
 
           <p className="mt-2 text-sm text-muted-foreground">
-            Kepercayaan model:{" "}
+            Tingkat Keyakinan analisis:{" "}
             <strong>{Math.round(latest.confidence * 100)}%</strong>
           </p>
 
@@ -299,7 +299,7 @@ function HeroBurnoutCard() {
           Langkah Rekomendasi 
         </div>
         <div className="mt-1 text-sm font-medium">
-          Singkirkan HP 30 menit sebelum tidur. Prediksi:{" "}
+          Kurangi penggunaan ponsel sekitar 30 menit sebelum tidur untuk membantu meningkatkan kualitas istirahat. Prediksi:{" "}
           <span className="text-success">−18% risiko</span> besok.
         </div>
       </div>
@@ -327,19 +327,18 @@ export default function Home() {
           >
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1 text-xs font-medium text-primary backdrop-blur">
               <Sparkles className="h-3.5 w-3.5 shrink-0" />
-              Dirancang untuk kehidupan mahasiswa
+              Dirancang untuk mendukung kesehatan mental mahasiswa
             </div>
 
             {/* Heading — bertahap dari mobile ke desktop */}
             <h1 className="mt-5 font-display text-3xl font-bold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl lg:text-6xl lg:leading-[1.05]">
-              Kenali burnout-mu
+              Kenali risiko burnout
               <br />
-              <span className="text-gradient">sebelum jadi berbahaya.</span>
+              <span className="text-gradient">sebelum berdampak lebih jauh.</span>
             </h1>
 
             <p className="mt-4 max-w-lg text-sm text-muted-foreground sm:mt-5 sm:text-base md:text-lg">
-BurnoutGuard membaca pola harianmu—tidur, screen time, mood, dan beban kerja—untuk menunjukkan apa yang sebenarnya memengaruhi kondisimu. Hanya satu langkah kecil yang relevan untuk dicoba hari ini.
-
+              BurnoutGuard membantu menganalisis pola aktivitas harian seperti waktu tidur, screen time, suasana hati, dan beban belajar untuk memberikan gambaran awal mengenai risiko burnout serta langkah rekomendasi yang dapat diterapkan dalam kehidupan sehari-hari.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3 sm:mt-7">
@@ -355,7 +354,7 @@ BurnoutGuard membaca pola harianmu—tidur, screen time, mood, dan beban kerja�
                 href="/dashboard"
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-5 py-2.5 text-sm font-semibold sm:px-6 sm:py-3"
               >
-                Lihat dashboard
+                Buka dashboard
               </Link>
             </div>
           </motion.div>
@@ -401,11 +400,11 @@ BurnoutGuard membaca pola harianmu—tidur, screen time, mood, dan beban kerja�
         className="mx-auto mb-16 w-[min(1100px,calc(100%-2rem))] text-center rounded-3xl border border-border bg-gradient-to-br from-primary-light via-surface to-mint/40 p-6 shadow-soft sm:p-10"
       >
         <h2 className="font-display text-2xl font-bold sm:text-3xl">
-          Mulai deteksi burnout-mu sekarang.
+          Mulai deteksi risiko burnout sejak dini.
         </h2>
         <p className="mt-3 text-sm text-muted-foreground max-w-md mx-auto">
-          Gratis, cepat, dan tanpa ceramah. Isi satu form singkat dan
-          BurnoutGuard akan memberitahumu apa yang sebenarnya terjadi.
+          Isi formulir singkat mengenai aktivitas harian Anda dan dapatkan gambaran awal
+          mengenai tingkat risiko burnout Anda secara gratis.
         </p>
         <div className="mt-5 flex flex-wrap gap-3 justify-center sm:mt-6">
           <Link
