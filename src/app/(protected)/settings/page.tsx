@@ -38,7 +38,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center">
-        <div className="text-sm text-muted-foreground">Memuat...</div>
+        <div className="text-sm text-muted-foreground">Menyiapkan halaman..</div>
       </div>
     )
   }
@@ -112,7 +112,7 @@ export default function SettingsPage() {
           <div>
             <div className="font-medium">Password</div>
             <div className="text-sm text-muted-foreground">
-              Ganti password akun kamu
+              Perbarui kata sandi akun
             </div>
           </div>
           <Link

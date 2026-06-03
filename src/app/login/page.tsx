@@ -29,7 +29,7 @@ export default function LoginPage() {
         title: 'Login gagal',
         description:
           error.message === 'Invalid login credentials'
-            ? 'Email belum terdaftar atau password salah'
+            ? 'Email belum terdaftar atau password salah. Silakan periksa kembali'
             : 'Terjadi kesalahan, coba lagi',
         variant: 'destructive',
       })
@@ -79,14 +79,14 @@ export default function LoginPage() {
           </Link>
 
           <h1 className="font-display text-2xl font-bold">Selamat datang kembali</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Lanjutkan dari sesi terakhirmu.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Senang melihatmu lagi. Yuk, cek kondisimu hari ini.</p>
 
           <form onSubmit={handleLogin} className="mt-6 space-y-4">
             <label className="block">
               <div className="text-xs font-semibold">Email</div>
               <input
                 type="email"
-                placeholder="kamu@kampus.ac.id"
+                placeholder="you@email.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 className="mt-1.5 w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none transition focus:border-primary focus:shadow-glow"
@@ -111,7 +111,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full rounded-2xl gradient-primary py-3 text-sm font-semibold text-primary-foreground shadow-glow transition hover:opacity-95 disabled:opacity-50"
             >
-              {loading ? 'Masuk...' : 'Masuk'}
+              {loading ? 'Menghubungkan akun...' : 'Masuk'}
             </button>
 
             <div className="text-center text-xs text-muted-foreground">
@@ -121,7 +121,7 @@ export default function LoginPage() {
               <div className="mt-3">
                 Belum punya akun?{' '}
                 <Link href="/register" className="font-semibold text-foreground">
-                  Daftar gratis
+                  Daftar Sekarang
                 </Link>
               </div>
             </div>

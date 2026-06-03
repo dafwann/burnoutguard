@@ -61,10 +61,10 @@ export default function RegisterPage() {
           </Link>
 
           <h2 className="mt-10 font-display text-4xl font-bold leading-tight">
-            Kenali burnout-mu sebelum jadi berbahaya.
+            Kenali risiko burnout sebelum berdampak lebih jauh.
           </h2>
           <p className="mt-3 max-w-md text-muted-foreground">
-            Buat akun untuk mulai memantau perjalanan kesehatan mentalmu.
+            Buat akun untuk mulai langkah awalmu hari ini menjaga keseimbangan aktivitas dan kesehatan mentalmu.
           </p>
           <div className="mt-8">
             <MeditationIllustration className="w-full max-w-md" />
@@ -85,12 +85,12 @@ export default function RegisterPage() {
             <>
               <h1 className="font-display text-2xl font-bold">Buat akun baru</h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Gratis. Selesai dalam 60 detik.
+                Hanya butuh satu menit untuk mulai menjaga ruang sehatmu.
               </p>
 
               <form onSubmit={handleRegister} className="mt-6 space-y-4">
                 <label className="block">
-                  <div className="text-xs font-semibold">Nama lengkap</div>
+                  <div className="text-xs font-semibold">Nama Lengkap</div>
                   <input
                     type="text"
                     placeholder="Budi Santoso"
@@ -102,10 +102,10 @@ export default function RegisterPage() {
                 </label>
 
                 <label className="block">
-                  <div className="text-xs font-semibold">Email kampus</div>
+                  <div className="text-xs font-semibold">Email</div>
                   <input
                     type="email"
-                    placeholder="kamu@kampus.ac.id"
+                    placeholder="you@email.com"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     className="mt-1.5 w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none transition focus:border-primary focus:shadow-glow"
@@ -117,7 +117,7 @@ export default function RegisterPage() {
                   <div className="text-xs font-semibold">Password</div>
                   <input
                     type="password"
-                    placeholder="Minimal 8 karakter"
+                    placeholder="Minimal 6 karakter"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     className="mt-1.5 w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none transition focus:border-primary focus:shadow-glow"
@@ -148,11 +148,11 @@ export default function RegisterPage() {
               </div>
               <h2 className="mt-6 font-display text-2xl font-bold">Verifikasi emailmu</h2>
               <p className="mt-3 max-w-sm text-sm text-muted-foreground">
-                Kami telah mengirim tautan verifikasi ke:
+                Tautan verifikasi telah kami kirimkan menuju alamat email:
               </p>
               <p className="mt-1 text-sm font-semibold break-all">{email}</p>
               <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-                Buka kotak masukmu dan klik tautan verifikasi sebelum masuk.
+                Silakan periksa kotak masukmu dan klik tautan tersebut untuk mengaktifkan akunmu.
               </p>
               <Link
                 href="/login"

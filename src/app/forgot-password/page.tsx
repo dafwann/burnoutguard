@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
     const SITE_URL =
       process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await supabase.auth.resetPasswordFor(email, {
       redirectTo: `${SITE_URL}/reset-password`,
     })
 
@@ -65,7 +65,7 @@ export default function ForgotPasswordPage() {
           </h1>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Kami akan mengirimkan link reset ke email kamu.
+            Tautan reset akan kami kirimkan menuju alamat email kamu.
           </p>
 
           <form onSubmit={handleReset} className="mt-6 space-y-4">
@@ -74,7 +74,7 @@ export default function ForgotPasswordPage() {
               <div className="text-xs font-semibold">Email</div>
               <input
                 type="email"
-                placeholder="you@uni.edu"
+                placeholder="you@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-1.5 w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none transition focus:border-primary focus:shadow-glow"
@@ -87,7 +87,7 @@ export default function ForgotPasswordPage() {
               disabled={loading}
               className="w-full rounded-2xl gradient-primary py-3 text-sm font-semibold text-primary-foreground shadow-glow transition hover:opacity-95 disabled:opacity-50"
             >
-              {loading ? 'Mengirim...' : 'Kirim link reset'}
+              {loading ? 'Mengirim...' : 'Kirim'}
             </button>
 
             <div className="text-center text-xs text-muted-foreground">

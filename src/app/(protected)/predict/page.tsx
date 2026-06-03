@@ -43,18 +43,19 @@ const FIELD_META: {
   min: number;
   max: number;
   hint: string;
+  desc: string;
 }[] = [
-  { key: "Age", label: "Usia", min: 15, max: 60, hint: "tahun" },
-  { key: "Study_Hours", label: "Jam Belajar", min: 0, max: 24, hint: "jam/hari" },
-  { key: "Class_Attendance", label: "Kehadiran Kelas (%)", min: 0, max: 100, hint: "%" },
-  { key: "Exam_Frequency", label: "Frekuensi Ujian", min: 0, max: 30, hint: "per bulan" },
-  { key: "Assignment_Load", label: "Beban Tugas", min: 0, max: 20, hint: "tugas/minggu" },
-  { key: "Sleep_Hours", label: "Jam Tidur", min: 0, max: 24, hint: "jam/hari" },
-  { key: "Social_Media_Use", label: "Penggunaan Media Sosial", min: 0, max: 24, hint: "jam/hari" },
-  { key: "Screen_Time", label: "Waktu Layar", min: 0, max: 24, hint: "jam/hari" },
-  { key: "Peer_Pressure", label: "Tekanan Teman Sebaya", min: 0, max: 10, hint: "skala 0–10" },
-  { key: "Family_Support", label: "Dukungan Keluarga", min: 0, max: 10, hint: "skala 0–10" },
-  { key: "Anxiety_Level", label: "Tingkat Kecemasan", min: 0, max: 10, hint: "skala 0–10" },
+  { key: "Age", label: "Usia", min: 15, max: 60, hint: "tahun", desc: "Umur kamu saat ini."},
+  { key: "Study_Hours", label: "Jam Belajar", min: 0, max: 24, hint: "jam", desc: "Durasi belajar kamu per hari."},
+  { key: "Class_Attendance", label: "Kehadiran Kelas", min: 0, max: 100, hint: "%", desc: "Persentase kehadiran kuliah."},
+  { key: "Exam_Frequency", label: "Frekuensi Ujian", min: 0, max: 30, hint: "/bulan", desc: "Jumlah ujian dalam bulan ini."},
+  { key: "Assignment_Load", label: "Beban Tugas", min: 0, max: 20, hint: "/minggu", desc: "Banyaknya tugas dalam seminggu."},
+  { key: "Sleep_Hours", label: "Jam Tidur", min: 0, max: 24, hint: "jam", desc: "Durasi tidur malam per hari." },
+  { key: "Social_Media_Use", label: "Penggunaan Media Sosial", min: 0, max: 24, hint: "jam", desc: "Waktu buka media sosial per hari."},
+  { key: "Screen_Time", label: "Waktu Layar", min: 0, max: 24, hint: "jam", desc: "Durasi menatap layar per hari."},
+  { key: "Peer_Pressure", label: "Tekanan Teman Sebaya", min: 0, max: 10, hint: "skala 0–10", desc: "0 = rendah, 10 = tinggi"},
+  { key: "Family_Support", label: "Dukungan Keluarga", min: 0, max: 10, hint: "skala 0–10", desc: "0 = rendah, 10 = tinggi"},
+  { key: "Anxiety_Level", label: "Tingkat Kecemasan", min: 0, max: 10, hint: "skala 0–10", desc: "0 = rendah, 10 = tinggi"},
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -395,8 +396,8 @@ async function handleSave() {
         </div>
         <h2 className="mt-3 font-display text-3xl font-bold">Prediksi Risiko Burnout</h2>
         <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-          Isi data berikut. Model AI kami akan menganalisis risiko burnout kamu berdasarkan 16
-          faktor yang telah divalidasi secara ilmiah.
+          Isi detail aktivitas harianmu di bawah ini. Kami akan menganalisis potensi tingkat
+          risiko burnout kamu berdasarkan 11 indikator aktivitas yang divalidasi secara ilmiah.
         </p>
       </div>
 
@@ -408,11 +409,15 @@ async function handleSave() {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            {FIELD_META.map(({ key, label, min, max, hint }) => (
+            {FIELD_META.map(({ key, label, min, max, hint, desc }) => (
               <div key={key}>
                 <label className="block text-xs font-semibold text-foreground">
                   {label}
                   <span className="ml-1 text-muted-foreground font-normal">({hint})</span>
+
+                  <span className="block mt-0.5 text-[10px] font-normal tracking-wide text-muted-foreground/60">
+                    {desc}
+                  </span>
                 </label>
                 <input
                   type="number"
@@ -481,7 +486,7 @@ async function handleSave() {
                   <Sparkles className="h-8 w-8 text-primary" />
                 </div>
                 <p className="max-w-xs text-sm text-muted-foreground">
-                  Isi form di sebelah kiri dan klik tombol prediksi. Hasilnya akan muncul di sini.
+                  Isi form dan klik tombol prediksi. Hasilnya akan muncul di sini.
                 </p>
               </motion.div>
             ) : loading ? (
