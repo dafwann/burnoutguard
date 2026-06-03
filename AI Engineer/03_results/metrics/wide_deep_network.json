@@ -1,0 +1,41 @@
+{
+  "model_name": "wide_deep_network",
+  "accuracy": 0.98,
+  "error_rate": 0.020000000000000018,
+  "mae": 0.02,
+  "macro_f1": 0.9744266881298125,
+  "weighted_f1": 0.979910842689951,
+  "precision_per_class": [
+    0.9891891891891892,
+    0.9681818181818181,
+    1.0
+  ],
+  "recall_per_class": [
+    0.9838709677419355,
+    0.9906976744186047,
+    0.9183673469387755
+  ],
+  "confusion_matrix": [
+    [
+      183,
+      3,
+      0
+    ],
+    [
+      2,
+      213,
+      0
+    ],
+    [
+      0,
+      4,
+      45
+    ]
+  ],
+  "training_time_seconds": 53.37006115913391,
+  "param_count": 15619,
+  "epochs_trained": 93,
+  "best_epoch": 83,
+  "high_threshold": 0.8700000000000006,
+  "low_threshold": 0.5200000000000002
+}
