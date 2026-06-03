@@ -226,7 +226,7 @@ const FEATURES = [
   {
     icon: HeartPulse,
     title: "Input Form Gaya Hidup",
-    body: "Pengguna dapat mengisi data harian seperti jam tidur, screen time, jam belajar, skor mood, dan aktivitas fisik.",
+    body: "Pengguna dapat mengisi data harian seperti jam tidur, screen time, jam belajar, tingkat kecemasan dan lainnya.",
   },
   {
     icon: Brain,
@@ -246,7 +246,7 @@ const FEATURES = [
   {
     icon: ShieldCheck,
     title: "Privasi & Keamanan",
-    body: "Data pengguna dikelola dengan aman menggunakan Supabase. Tidak ada data yang dijual atau dibagikan ke pihak ketiga.",
+    body: "Data pengguna dikelola dengan aman. Tidak ada data yang dijual atau dibagikan ke pihak ketiga.",
   },
   {
     icon: Users,
