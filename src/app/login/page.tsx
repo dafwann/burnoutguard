@@ -86,7 +86,7 @@ export default function LoginPage() {
               <div className="text-xs font-semibold">Email</div>
               <input
                 type="email"
-                placeholder="kamu@kampus.ac.id"
+                placeholder="you@uni.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 className="mt-1.5 w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none transition focus:border-primary focus:shadow-glow"
