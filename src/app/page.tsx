@@ -64,7 +64,7 @@ return (
             href="/register"
             className="rounded-full gradient-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground shadow-glow hover:opacity-90 transition"
           >
-            Mulai Gratis
+            Daftar Gratis
           </Link>
         </div>
 
@@ -124,7 +124,7 @@ return (
               onClick={() => setMobileOpen(false)}
               className="rounded-xl gradient-primary px-4 py-2 text-center font-semibold text-primary-foreground"
             >
-              Mulai Gratis
+              Daftar Gratis
             </Link>
           </nav>
         </div>
