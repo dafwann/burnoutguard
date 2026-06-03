@@ -50,7 +50,7 @@ const FIELD_META: {
   { key: "Class_Attendance", label: "Kehadiran Kelas", min: 0, max: 100, hint: "%", desc: "Persentase kehadiran kuliah."},
   { key: "Exam_Frequency", label: "Frekuensi Ujian", min: 0, max: 30, hint: "/bulan", desc: "Jumlah ujian dalam bulan ini."},
   { key: "Assignment_Load", label: "Beban Tugas", min: 0, max: 20, hint: "/minggu", desc: "Banyaknya tugas dalam seminggu."},
-  { key: "Sleep_Hours", label: "Jam Tidur", min: 0, max: 24, hint: "jam", desc: "Rata-rata Durasi tidur malam per hari." },
+  { key: "Sleep_Hours", label: "Jam Tidur", min: 0, max: 24, hint: "jam", desc: "Durasi tidur malam per hari." },
   { key: "Social_Media_Use", label: "Penggunaan Media Sosial", min: 0, max: 24, hint: "jam", desc: "Waktu buka media sosial per hari."},
   { key: "Screen_Time", label: "Waktu Layar", min: 0, max: 24, hint: "jam", desc: "Durasi menatap layar per hari."},
   { key: "Peer_Pressure", label: "Tekanan Teman Sebaya", min: 0, max: 10, hint: "skala 0–10", desc: "0 = rendah, 10 = tinggi"},
