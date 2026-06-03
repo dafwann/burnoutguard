@@ -463,7 +463,7 @@ export default function DashboardPage() {
 
       {/* ── Stats ── */}
       {/* 1 kolom di mobile → 3 kolom md */}
-      <div className="grid gap-4 sm:grid-cols-3 sm:gap-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5">
         <StatCard
           icon={<BarChart2 className="h-4 w-4" />}
           label="Total Prediksi"
