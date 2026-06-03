@@ -236,7 +236,7 @@ function HeroBurnoutCard() {
           </div>
 
           <p className="mt-2 text-sm text-muted-foreground">
-            Tingkat Keyakinan analisis:{" "}
+            Tingkat Akurasi analisis:{" "}
             <strong>{Math.round(latest.confidence * 100)}%</strong>
           </p>
 
@@ -403,7 +403,7 @@ export default function Home() {
           Mulai deteksi risiko burnout sejak dini.
         </h2>
         <p className="mt-3 text-sm text-muted-foreground max-w-md mx-auto">
-          Isi formulir singkat mengenai aktivitas harian Anda dan dapatkan gambaran awal
+          Isi form singkat mengenai aktivitas harian Anda dan dapatkan gambaran awal
           mengenai tingkat risiko burnout Anda secara gratis.
         </p>
         <div className="mt-5 flex flex-wrap gap-3 justify-center sm:mt-6">
