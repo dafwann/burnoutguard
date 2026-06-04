@@ -416,8 +416,6 @@ function WheelPicker({
 
   const motionX = useMotionValue(0);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-
   const [activeIndex, setActiveIndex] = useState(0);
 
   const currentVal =
@@ -427,10 +425,10 @@ function WheelPicker({
 
   const currentIndex = currentVal - min;
 
+  // sync external value
   useEffect(() => {
     if (!isDragging.current) {
-      const x = -currentIndex * ITEM_W;
-      motionX.set(x);
+      motionX.set(-currentIndex * ITEM_W);
       setActiveIndex(currentIndex);
     }
   }, [currentIndex]);
@@ -440,8 +438,13 @@ function WheelPicker({
   }
 
   function getIndexFromX(x: number) {
-    const rawIndex = Math.round(-x / ITEM_W);
-    return clamp(rawIndex, 0, items.length - 1);
+    return clamp(Math.round(-x / ITEM_W), 0, items.length - 1);
+  }
+
+  function rubberBand(value: number, min: number, max: number, damping = 0.25) {
+    if (value < min) return min + (value - min) * damping;
+    if (value > max) return max + (value - max) * damping;
+    return value;
   }
 
   function snapToIndex(idx: number) {
@@ -451,8 +454,8 @@ function WheelPicker({
 
     animate(motionX, -clamped * ITEM_W, {
       type: "spring",
-      stiffness: 320,
-      damping: 32,
+      stiffness: 260,
+      damping: 28,
     });
 
     setActiveIndex(clamped);
@@ -460,7 +463,6 @@ function WheelPicker({
 
   function onPointerDown(e: React.PointerEvent) {
     isDragging.current = true;
-
     startX.current = e.clientX;
     startIndex.current = getIndexFromX(motionX.get());
 
@@ -470,29 +472,32 @@ function WheelPicker({
   function onPointerMove(e: React.PointerEvent) {
     if (!isDragging.current) return;
 
-    const delta = e.clientX - startX.current;
+    const deltaRaw = e.clientX - startX.current;
 
-    const rawX = -startIndex.current * ITEM_W + delta;
+    // 🔥 MOBILE FEEL: lebih "berat"
+    const DRAG_SENSITIVITY = 0.85; // < 1 = lebih berat
+    const delta = deltaRaw * DRAG_SENSITIVITY;
+
+    let rawX = -startIndex.current * ITEM_W + delta;
 
     const minX = -(items.length - 1) * ITEM_W;
     const maxX = 0;
 
-    motionX.set(clamp(rawX, minX, maxX));
+    // 🔥 RUBBER BANDING (biar tidak licin keluar batas)
+    rawX = rubberBand(rawX, minX, maxX, 0.22);
+
+    motionX.set(rawX);
 
     const newIndex = getIndexFromX(rawX);
-
-    if (newIndex !== activeIndex) {
-      setActiveIndex(newIndex);
-    }
+    if (newIndex !== activeIndex) setActiveIndex(newIndex);
   }
 
-  function onPointerUp(e: React.PointerEvent) {
+  function onPointerUp() {
     if (!isDragging.current) return;
 
     isDragging.current = false;
 
     const finalX = motionX.get();
-
     const index = getIndexFromX(finalX);
 
     snapToIndex(index);
@@ -504,21 +509,19 @@ function WheelPicker({
 
   return (
     <div
-      ref={containerRef}
       className={`mt-1.5 rounded-xl border bg-background overflow-hidden select-none transition ${
         hasError ? "border-danger" : "border-border"
       }`}
       style={{ height: "42px", position: "relative" }}
     >
-      {/* CENTER HIGHLIGHT (lebih soft + rounded seperti awal) */}
+      {/* CENTER HIGHLIGHT */}
       <div
         className="absolute inset-y-0 left-1/2 -translate-x-1/2 pointer-events-none z-0"
         style={{
           width: ITEM_W,
           background: "color-mix(in oklab, var(--primary) 10%, transparent)",
-          border:
-            "1px solid color-mix(in oklab, var(--primary) 25%, transparent)",
-          borderRadius: 12, // 🔥 lebih rounded (pill feel)
+          border: "1px solid color-mix(in oklab, var(--primary) 25%, transparent)",
+          borderRadius: 12,
         }}
       />
 
@@ -562,10 +565,10 @@ function WheelPicker({
             const dist = Math.abs(idx - activeIndex);
             const isActive = idx === activeIndex;
 
-            const scale = isActive ? 1.03 : dist === 1 ? 0.92 : 0.8;
+            const scale = isActive ? 1.02 : dist === 1 ? 0.92 : 0.8;
 
             const opacity =
-              isActive ? 1 : dist === 1 ? 0.7 : dist === 2 ? 0.45 : 0.25;
+              isActive ? 1 : dist === 1 ? 0.72 : dist === 2 ? 0.45 : 0.25;
 
             return (
               <motion.button
@@ -577,16 +580,14 @@ function WheelPicker({
                   width: ITEM_W,
                   height: 42,
 
-                  // 🔥 FONT LEBIH KECIL + CLEAN
-                  fontSize: isActive ? 15 : 12,
+                  // 🔥 lebih kecil + soft
+                  fontSize: isActive ? 14 : 12,
 
                   color: isActive
-                    ? "color-mix(in oklab, var(--primary) 80%, var(--foreground))"
+                    ? "color-mix(in oklab, var(--primary) 78%, var(--foreground))"
                     : "var(--muted-foreground)",
 
-                  // 🔥 bold tetap tapi tidak terlalu “keras”
                   fontWeight: isActive ? 600 : 500,
-
                   letterSpacing: isActive ? "-0.01em" : "0em",
 
                   scale,
@@ -595,8 +596,8 @@ function WheelPicker({
                 animate={{ scale, opacity }}
                 transition={{
                   type: "spring",
-                  stiffness: 380,
-                  damping: 30,
+                  stiffness: 420,
+                  damping: 34, // 🔥 lebih “sendat”
                 }}
               >
                 {item}
