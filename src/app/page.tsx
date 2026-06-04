@@ -331,7 +331,7 @@ export default function Home() {
             </div>
 
             {/* Heading — bertahap dari mobile ke desktop */}
-            <h1 className="max-w-[13ch] text-balance mt-5 font-display text-3xl font-bold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl lg:text-6xl lg:leading-[1.05]">
+           <h1 className="mt-5 font-display text-3xl font-bold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl lg:text-6xl lg:leading-[1.05]">
               Kenali risiko burnout
               <br />
               <span className="text-gradient">sebelum berdampak lebih jauh.</span>
