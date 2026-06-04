@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Brain, Sparkles, Save, AlertCircle, CheckCircle2 } from "lucide-react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
+import { Brain, Sparkles, Save, AlertCircle, CheckCircle2, HelpCircle, X } from "lucide-react";
 import { createClient } from "@/lib/supabase";
-
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 interface PredictionResult {
@@ -43,20 +42,111 @@ const FIELD_META: {
   min: number;
   max: number;
   hint: string;
-  desc: string;
+  description: string;
 }[] = [
-  { key: "Age", label: "Usia", min: 15, max: 60, hint: "tahun", desc: "Umur kamu saat ini."},
-  { key: "Study_Hours", label: "Jam Belajar", min: 0, max: 24, hint: "jam", desc: "Durasi belajar kamu per hari."},
-  { key: "Class_Attendance", label: "Kehadiran Kelas", min: 0, max: 100, hint: "%", desc: "Persentase kehadiran kuliah."},
-  { key: "Exam_Frequency", label: "Frekuensi Ujian", min: 0, max: 30, hint: "/bulan", desc: "Jumlah ujian dalam bulan ini."},
-  { key: "Assignment_Load", label: "Beban Tugas", min: 0, max: 20, hint: "/minggu", desc: "Banyaknya tugas dalam seminggu."},
-  { key: "Sleep_Hours", label: "Jam Tidur", min: 0, max: 24, hint: "jam", desc: "Durasi tidur malam per hari." },
-  { key: "Social_Media_Use", label: "Penggunaan Media Sosial", min: 0, max: 24, hint: "jam", desc: "Waktu buka media sosial per hari."},
-  { key: "Screen_Time", label: "Waktu Layar", min: 0, max: 24, hint: "jam", desc: "Durasi menatap layar per hari."},
-  { key: "Peer_Pressure", label: "Tekanan Teman Sebaya", min: 0, max: 10, hint: "skala 0–10", desc: "0 = rendah, 10 = tinggi"},
-  { key: "Family_Support", label: "Dukungan Keluarga", min: 0, max: 10, hint: "skala 0–10", desc: "0 = rendah, 10 = tinggi"},
-  { key: "Anxiety_Level", label: "Tingkat Kecemasan", min: 0, max: 10, hint: "skala 0–10", desc: "0 = rendah, 10 = tinggi"},
+  {
+    key: "Age",
+    label: "Usia",
+    min: 15,
+    max: 60,
+    hint: "tahun",
+    description:
+      "Usia kamu saat ini dalam satuan tahun. Usia dapat mempengaruhi seberapa baik seseorang mampu mengelola beban akademik dan tekanan kehidupan kampus. Perbedaan usia seringkali menentukan cara dan kematangan mahasiswa dalam menghadapi stres.",
+  },
+  {
+    key: "Study_Hours",
+    label: "Jam Belajar",
+    min: 0,
+    max: 24,
+    hint: "jam/hari",
+    description:
+      "Rata-rata waktu (dalam jam) yang kamu habiskan setiap harinya untuk belajar, membaca materi, atau mereview catatan di luar jam kelas resmi. Belajar terlalu lama tanpa istirahat yang cukup dapat secara drastis mempercepat terjadinya kelelahan mental.",
+  },
+  {
+    key: "Class_Attendance",
+    label: "Kehadiran Kelas",
+    min: 0,
+    max: 100,
+    hint: "%",
+    description:
+      "Persentase kehadiran kamu di kelas selama semester berjalan. Tingkat kehadiran yang rendah seringkali memicu kecemasan akibat materi yang tertinggal, sementara kehadiran tinggi menunjukkan rutinitas yang baik meskipun tetap harus diimbangi dengan istirahat.",
+  },
+  {
+    key: "Exam_Frequency",
+    label: "Frekuensi Ujian",
+    min: 0,
+    max: 30,
+    hint: "per bulan",
+    description:
+      "Jumlah ujian, kuis, atau evaluasi akademik yang kamu hadapi dalam periode satu bulan. Frekuensi ujian yang terlalu padat merupakan salah satu pemicu stres terbesar dan berhubungan erat dengan peningkatan drastis risiko burnout.",
+  },
+  {
+    key: "Assignment_Load",
+    label: "Beban Tugas",
+    min: 0,
+    max: 20,
+    hint: "tugas/minggu",
+    description:
+      "Jumlah tugas akademik, presentasi, atau proyek yang harus kamu selesaikan dalam setiap minggunya. Menumpuknya beban tugas tanpa pengaturan manajemen waktu yang baik akan meningkatkan tekanan psikologis secara signifikan.",
+  },
+  {
+    key: "Sleep_Hours",
+    label: "Jam Tidur",
+    min: 0,
+    max: 24,
+    hint: "jam/hari",
+    description:
+      "Rata-rata jumlah waktu yang kamu gunakan untuk tidur setiap harinya. Kurang tidur kronis adalah salah satu prediktor utama terjadinya kelelahan fisik dan mental yang berujung pada burnout. Tubuh manusia idealnya membutuhkan 7-8 jam waktu tidur.",
+  },
+  {
+    key: "Social_Media_Use",
+    label: "Penggunaan Media Sosial",
+    min: 0,
+    max: 24,
+    hint: "jam/hari",
+    description:
+      "Waktu rata-rata yang kamu habiskan secara spesifik untuk berselancar di media sosial setiap harinya. Penggunaan berlebihan terbukti dapat mengurangi kualitas waktu istirahat dan memicu rasa cemas akibat fenomena FOMO (Fear Of Missing Out).",
+  },
+  {
+    key: "Screen_Time",
+    label: "Waktu Layar",
+    min: 0,
+    max: 24,
+    hint: "jam/hari",
+    description:
+      "Total durasi waktu kumulatif (dalam jam) yang kamu habiskan di depan layar setiap harinya, baik itu layar HP, tablet, maupun laptop untuk segala keperluan. Overstimulasi layar sering menjadi penyebab utama kelelahan mata dan pikiran.",
+  },
+  {
+    key: "Peer_Pressure",
+    label: "Tekanan Teman Sebaya",
+    min: 0,
+    max: 10,
+    hint: "skala 0–10",
+    description:
+      "Evaluasi subyektif (0 = tidak ada tekanan, 10 = tekanan ekstrem) mengenai seberapa besar dorongan yang kamu rasakan untuk mengikuti standar sosial, tren, dan gaya hidup teman-teman di kampus. Tekanan sosial ini sangat menguras energi emosional.",
+  },
+  {
+    key: "Family_Support",
+    label: "Dukungan Keluarga",
+    min: 0,
+    max: 10,
+    hint: "skala 0–10",
+    description:
+      "Tingkat dukungan keluarga dengan skala 0 (tanpa dukungan) hingga 10 (sangat didukung). Dukungan ini mencakup aspek emosional, moral, dan finansial. Keluarga yang suportif terbukti kuat menjadi pelindung (buffer) alami dari stres akademik.",
+  },
+  {
+    key: "Anxiety_Level",
+    label: "Tingkat Kecemasan",
+    min: 0,
+    max: 10,
+    hint: "skala 0–10",
+    description:
+      "Estimasi tingkat kecemasan atau stres harian kamu pada rentang 0 (sangat tenang) hingga 10 (sangat panik/khawatir). Kecemasan yang dibiarkan tanpa kelola dapat mempercepat burnout, menurunkan fokus, dan merusak rutinitas harian.",
+  },
 ];
+
+const WHEEL_KEYS: (keyof FormState)[] = ["Peer_Pressure", "Family_Support", "Anxiety_Level"];
+const ATTENDANCE_KEY: keyof FormState = "Class_Attendance";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 const riskLabel = (level: string) => {
@@ -82,12 +172,12 @@ const riskColor = (level: string) => {
 
 const riskEmoji = (level: string) =>
   level === "Low" ? "😌" : level === "Medium" ? "😐" : "😰";
+
 function generateRecommendations(
   prediction: "Low" | "Medium" | "High",
   form: FormState
 ): RecommendationData {
   const tips: string[] = [];
-
   const screenTime = Number(form.Screen_Time);
   const sleepHours = Number(form.Sleep_Hours);
   const anxiety = Number(form.Anxiety_Level);
@@ -98,134 +188,441 @@ function generateRecommendations(
   const peerPressure = Number(form.Peer_Pressure);
   const studyHours = Number(form.Study_Hours);
   const attendance = Number(form.Class_Attendance);
-
   let intro = "";
 
   if (prediction === "High") {
     intro =
       "Mentalmu lagi di titik jenuh banget, dan ngerasa overwhelmed itu valid kok. Tapi inget, health comes first. Fokus ke dirimu dulu.";
-
     if (screenTime >= 10)
-      tips.push(
-        "Screen time kamu sangat tinggi. Coba digital sunset dengan mematikan gadget 1 jam sebelum tidur."
-      );
-
+      tips.push("Screen time kamu sangat tinggi. Coba digital sunset dengan mematikan gadget 1 jam sebelum tidur.");
     if (sleepHours <= 5)
-      tips.push(
-        "Kurang tidur memperparah burnout. Prioritaskan tidur malam ini dan targetkan 7–8 jam."
-      );
-
+      tips.push("Kurang tidur memperparah burnout. Prioritaskan tidur malam ini dan targetkan 7–8 jam.");
     if (anxiety >= 8)
-      tips.push(
-        "Tingkat kecemasanmu tinggi. Coba teknik grounding 5-4-3-2-1 atau konsultasi dengan konselor kampus."
-      );
-
+      tips.push("Tingkat kecemasanmu tinggi. Coba teknik grounding 5-4-3-2-1 atau konsultasi dengan konselor kampus.");
     if (assignment >= 10)
-      tips.push(
-        "Fokuskan diri pada satu tugas paling mendesak terlebih dahulu."
-      );
-
+      tips.push("Fokuskan diri pada satu tugas paling mendesak terlebih dahulu.");
     if (exam >= 8)
-      tips.push(
-        "Gunakan metode Pomodoro agar persiapan ujian lebih efektif."
-      );
-
+      tips.push("Gunakan metode Pomodoro agar persiapan ujian lebih efektif.");
     if (family <= 3)
-      tips.push(
-        "Cari support system dari teman dekat atau layanan konseling kampus."
-      );
-
+      tips.push("Cari support system dari teman dekat atau layanan konseling kampus.");
     if (socialMedia >= 8)
-      tips.push(
-        "Kurangi penggunaan media sosial beberapa hari untuk mengurangi overstimulasi."
-      );
-
+      tips.push("Kurangi penggunaan media sosial beberapa hari untuk mengurangi overstimulasi.");
     if (peerPressure >= 8)
-      tips.push(
-        "Fokus pada progresmu sendiri, bukan pencapaian orang lain."
-      );
-
+      tips.push("Fokus pada progresmu sendiri, bukan pencapaian orang lain.");
     if (studyHours >= 12)
-      tips.push(
-        "Belajar terlalu lama dapat meningkatkan risiko burnout. Tambahkan waktu istirahat."
-      );
+      tips.push("Belajar terlalu lama dapat meningkatkan risiko burnout. Tambahkan waktu istirahat.");
   }
-
   if (prediction === "Medium") {
     intro =
       "Kamu mulai menguras energi lebih cepat dari biasanya. Ini saat yang tepat untuk mengatur ulang ritme aktivitasmu.";
-
     if (screenTime >= 8)
-      tips.push(
-        "Kurangi screen time dan ganti sebagian waktunya dengan aktivitas offline."
-      );
-
+      tips.push("Kurangi screen time dan ganti sebagian waktunya dengan aktivitas offline.");
     if (sleepHours <= 6)
-      tips.push(
-        "Mulai prioritaskan tidur minimal 7 jam setiap malam."
-      );
-
+      tips.push("Mulai prioritaskan tidur minimal 7 jam setiap malam.");
     if (anxiety >= 6)
-      tips.push(
-        "Luangkan waktu untuk journaling atau latihan pernapasan."
-      );
-
+      tips.push("Luangkan waktu untuk journaling atau latihan pernapasan.");
     if (assignment >= 8)
-      tips.push(
-        "Pecah tugas besar menjadi target-target kecil."
-      );
-
+      tips.push("Pecah tugas besar menjadi target-target kecil.");
     if (exam >= 6)
-      tips.push(
-        "Hindari belajar sistem kebut semalam."
-      );
-
+      tips.push("Hindari belajar sistem kebut semalam.");
     if (socialMedia >= 7)
-      tips.push(
-        "Buat aturan no-phone zone saat belajar."
-      );
-
+      tips.push("Buat aturan no-phone zone saat belajar.");
     if (attendance <= 60)
-      tips.push(
-        "Coba tingkatkan kehadiran kelas secara bertahap."
-      );
+      tips.push("Coba tingkatkan kehadiran kelas secara bertahap.");
   }
-
   if (prediction === "Low") {
     intro =
       "Kondisi mentalmu saat ini cukup stabil. Pertahankan kebiasaan positif yang sudah berjalan.";
-
     if (sleepHours >= 7 && sleepHours <= 9)
-      tips.push(
-        "Jam tidurmu sudah optimal dan membantu menjaga kesehatan mental."
-      );
-
+      tips.push("Jam tidurmu sudah optimal dan membantu menjaga kesehatan mental.");
     if (socialMedia <= 4)
-      tips.push(
-        "Penggunaan media sosialmu sudah cukup terkontrol."
-      );
-
+      tips.push("Penggunaan media sosialmu sudah cukup terkontrol.");
     if (screenTime <= 6)
-      tips.push(
-        "Screen time yang sehat membantu menjaga fokus dan keseimbangan hidup."
-      );
-
+      tips.push("Screen time yang sehat membantu menjaga fokus dan keseimbangan hidup.");
     if (family >= 8)
-      tips.push(
-        "Dukungan keluarga yang baik menjadi faktor pelindung burnout."
-      );
-
+      tips.push("Dukungan keluarga yang baik menjadi faktor pelindung burnout.");
     if (studyHours >= 3 && studyHours <= 8)
-      tips.push(
-        "Pola belajar yang seimbang merupakan kebiasaan yang baik."
-      );
+      tips.push("Pola belajar yang seimbang merupakan kebiasaan yang baik.");
   }
 
-  return {
-    intro,
-    tips: tips.slice(0, 3),
-  };
+  return { intro, tips: tips.slice(0, 3) };
 }
+
+// ── Info Card Tooltip ──────────────────────────────────────────────────────────
+function InfoCard({
+  label,
+  description,
+  onClose,
+}: {
+  label: string;
+  description: string;
+  onClose: () => void;
+}) {
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 4 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 4 }}
+        transition={{ duration: 0.18 }}
+        className="absolute z-50 left-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] rounded-2xl border border-border bg-surface shadow-lg p-4"
+        style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.13)" }}
+      >
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <span className="font-semibold text-sm text-foreground">{label}</span>
+          <button
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground transition flex-shrink-0 mt-0.5"
+            aria-label="Tutup"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <p className="text-xs text-muted-foreground leading-relaxed">{description}</p>
+        <button
+          onClick={onClose}
+          className="mt-3 w-full rounded-xl bg-primary-light text-primary text-xs font-semibold py-2 hover:opacity-80 transition"
+        >
+          Tutup
+        </button>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+// ── Attendance Slider ──────────────────────────────────────────────────────────
+function AttendanceSlider({
+  value,
+  onChange,
+  hasError,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  hasError: boolean;
+}) {
+  const numVal = value === "" ? 0 : Math.min(100, Math.max(0, Number(value)));
+
+  function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value.replace(/[^0-9]/g, "");
+    if (raw === "") { onChange(""); return; }
+    const n = Math.min(100, Math.max(0, parseInt(raw, 10)));
+    onChange(String(n));
+  }
+
+  function handleSlider(e: React.ChangeEvent<HTMLInputElement>) {
+    onChange(e.target.value);
+  }
+
+  return (
+    <div
+      className={`mt-1.5 flex items-center gap-2 rounded-xl border bg-background px-3 transition ${
+        hasError ? "border-danger" : "border-border"
+      }`}
+      style={{ height: "42px" }}
+    >
+      {/* Number input */}
+      <input
+        type="number"
+        inputMode="numeric"
+        min={0}
+        max={100}
+        value={value}
+        onChange={handleInput}
+        placeholder="0"
+        className="w-12 shrink-0 bg-transparent text-sm font-semibold text-foreground outline-none text-center tabular-nums"
+        style={{ MozAppearance: "textfield" }}
+      />
+      <span className="text-xs text-muted-foreground shrink-0">%</span>
+      {/* Divider */}
+      <div className="w-px h-5 bg-border shrink-0" />
+      {/* Slider */}
+      <div className="flex-1 relative flex items-center">
+        <style>{`
+          .attendance-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 9999px;
+            outline: none;
+            cursor: pointer;
+            background: linear-gradient(
+              to right,
+              var(--primary) 0%,
+              var(--primary) ${numVal}%,
+              var(--accent) ${numVal}%,
+              var(--accent) 100%
+            );
+          }
+          .attendance-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid white;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+            cursor: pointer;
+            transition: transform 0.15s;
+          }
+          .attendance-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+          }
+          .attendance-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid white;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+            cursor: pointer;
+          }
+        `}</style>
+        <input
+          type="range"
+          min={0}
+          max={100}
+          value={numVal}
+          onChange={handleSlider}
+          className="attendance-slider"
+        />
+      </div>
+    </div>
+  );
+}
+
+// ── Wheel Picker ───────────────────────────────────────────────────────────
+function WheelPicker({
+  value,
+  min,
+  max,
+  onChange,
+  hasError,
+}: {
+  value: string;
+  min: number;
+  max: number;
+  onChange: (v: string) => void;
+  hasError: boolean;
+}) {
+  const items = Array.from({ length: max - min + 1 }, (_, i) => min + i);
+  const currentVal = value === "" ? min : Math.min(max, Math.max(min, parseInt(value, 10)));
+  const currentIndex = currentVal - min;
+
+  const ITEM_W = 44;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const startIndex = useRef(currentIndex);
+  const motionX = useMotionValue(-currentIndex * ITEM_W);
+  const snapTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Keep motion in sync with external value changes
+  useEffect(() => {
+    if (!isDragging.current) {
+      animate(motionX, -currentIndex * ITEM_W, { type: "spring", stiffness: 300, damping: 30 });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex]);
+
+  function snapToIndex(idx: number) {
+    const clamped = Math.max(0, Math.min(items.length - 1, idx));
+    onChange(String(items[clamped]));
+    animate(motionX, -clamped * ITEM_W, { type: "spring", stiffness: 320, damping: 32 });
+  }
+
+  // Pointer events for drag
+  function onPointerDown(e: React.PointerEvent) {
+    isDragging.current = true;
+    startX.current = e.clientX;
+    startIndex.current = currentIndex;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    if (snapTimeout.current) clearTimeout(snapTimeout.current);
+  }
+
+  function onPointerMove(e: React.PointerEvent) {
+    if (!isDragging.current) return;
+    const delta = e.clientX - startX.current;
+    const newX = -startIndex.current * ITEM_W + delta;
+    motionX.set(newX);
+  }
+
+  function onPointerUp(e: React.PointerEvent) {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    const delta = e.clientX - startX.current;
+    const indexDelta = -Math.round(delta / ITEM_W);
+    snapToIndex(startIndex.current + indexDelta);
+  }
+
+  function onItemClick(idx: number) {
+    snapToIndex(idx);
+  }
+
+  // Touch support
+  const touchStartX = useRef(0);
+  function onTouchStart(e: React.TouchEvent) {
+    isDragging.current = true;
+    touchStartX.current = e.touches[0].clientX;
+    startIndex.current = currentIndex;
+  }
+  function onTouchMove(e: React.TouchEvent) {
+    if (!isDragging.current) return;
+    const delta = e.touches[0].clientX - touchStartX.current;
+    const newX = -startIndex.current * ITEM_W + delta;
+    motionX.set(newX);
+  }
+  function onTouchEnd(e: React.TouchEvent) {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    const indexDelta = -Math.round(delta / ITEM_W);
+    snapToIndex(startIndex.current + indexDelta);
+  }
+
+  return (
+    <div
+      ref={containerRef}
+      className={`mt-1.5 rounded-xl border bg-background overflow-hidden select-none transition ${
+        hasError ? "border-danger" : "border-border"
+      }`}
+      style={{ height: "42px", position: "relative" }}
+    >
+      {/* Center highlight */}
+      <div
+        className="absolute inset-y-0 left-1/2 -translate-x-1/2 pointer-events-none z-0 rounded-lg"
+        style={{
+          width: ITEM_W,
+          background: "var(--primary-light)",
+          border: "1.5px solid color-mix(in oklab, var(--primary) 40%, transparent)",
+        }}
+      />
+      {/* Left / right fade */}
+      <div
+        className="absolute inset-y-0 left-0 pointer-events-none z-20"
+        style={{ width: 48, background: "linear-gradient(to right, var(--background) 60%, transparent)" }}
+      />
+      <div
+        className="absolute inset-y-0 right-0 pointer-events-none z-20"
+        style={{ width: 48, background: "linear-gradient(to left, var(--background) 60%, transparent)" }}
+      />
+
+      {/* Track */}
+      <div
+        className="absolute inset-0 flex items-center cursor-grab  z-10"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        <motion.div
+          className="flex items-center"
+          style={{
+            x: motionX,
+            paddingLeft: `calc(50% - ${ITEM_W / 2}px)`,
+            paddingRight: `calc(50% - ${ITEM_W / 2}px)`,
+          }}
+        >
+          {items.map((item, idx) => {
+            const dist = Math.abs(idx - currentIndex);
+            const isActive = dist === 0;
+            const scale = isActive ? 1 : dist === 1 ? 0.8 : 0.65;
+            const opacity = isActive ? 1 : dist === 1 ? 0.55 : dist === 2 ? 0.3 : 0.15;
+
+            return (
+              <motion.button
+                key={item}
+                type="button"
+                onClick={() => onItemClick(idx)}
+                className="flex-shrink-0 flex items-center justify-center font-bold tabular-nums transition-colors"
+                style={{
+                  width: ITEM_W,
+                  height: 42,
+                  fontSize: isActive ? 17 : 13,
+                  color: isActive ? "var(--primary)" : "var(--muted-foreground)",
+                  fontWeight: isActive ? 700 : 500,
+                  scale,
+                  opacity,
+                  pointerEvents: "auto",
+                }}
+                animate={{ scale, opacity }}
+                transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              >
+                {item}
+              </motion.button>
+            );
+          })}
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+// ── Field wrapper with Info Card ───────────────────────────────────────────────
+function FieldWrapper({
+  meta,
+  children,
+  errorMsg,
+}: {
+  meta: (typeof FIELD_META)[number];
+  children: React.ReactNode;
+  errorMsg?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    function handler(e: MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  return (
+    <div ref={wrapRef} className="relative">
+      <label className="block text-xs font-semibold text-foreground">
+        <span>
+          {meta.label}
+          <span className="font-normal text-muted-foreground">
+            {" "}({meta.hint})
+          </span>
+
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="inline-flex align-middle ml-1 text-muted-foreground hover:text-primary transition"
+            aria-label={`Info tentang ${meta.label}`}
+          >
+            <HelpCircle className="h-3.5 w-3.5" />
+          </button>
+        </span>
+      </label>
+
+      {children}
+
+      {errorMsg && (
+        <p className="mt-1 flex items-start gap-1 text-xs text-danger">
+          <AlertCircle className="mt-0.5 h-3 w-3 flex-shrink-0" />
+          {errorMsg}
+        </p>
+      )}
+
+      {open && (
+        <InfoCard label={meta.label} description={meta.description} onClose={() => setOpen(false)} />
+      )}
+    </div>
+  );
+}
+
 // ── Main component ─────────────────────────────────────────────────────────────
 export default function PredictPage() {
   const supabase = createClient();
@@ -247,8 +644,7 @@ export default function PredictPage() {
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
-  const [recommendation, setRecommendation] =
-    useState<RecommendationData | null>(null);
+  const [recommendation, setRecommendation] = useState<RecommendationData | null>(null);
 
   // ── Validation ───────────────────────────────────────────────────────────────
   function validate(): boolean {
@@ -302,25 +698,14 @@ export default function PredictPage() {
       });
       if (!res.ok) {
         const errData = await res.json();
-
-        throw new Error(
-          errData.error || `Server error ${res.status}`
-        );
+        throw new Error(errData.error || `Server error ${res.status}`);
       }
       const data: PredictionResult = await res.json();
       setResult(data);
-
-    setRecommendation(
-    generateRecommendations(
-        data.prediction,
-        form
-    )
-    );
+      setRecommendation(generateRecommendations(data.prediction, form));
     } catch (err: unknown) {
       setApiError(
-        err instanceof Error
-          ? err.message
-          : "Gagal terhubung ke server. Coba beberapa saat lagi."
+        err instanceof Error ? err.message : "Gagal terhubung ke server. Coba beberapa saat lagi."
       );
     } finally {
       setLoading(false);
@@ -328,31 +713,20 @@ export default function PredictPage() {
   }
 
   // ── Save result ───────────────────────────────────────────────────────────────
-async function handleSave() {
-  if (!result) return;
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    alert("Silakan login terlebih dahulu.");
-    return;
-  }
-
-  try {
-    const { error } = await supabase
-      .from("predictions")
-      .insert({
+  async function handleSave() {
+    if (!result) return;
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) { alert("Silakan login terlebih dahulu."); return; }
+    try {
+      const { error } = await supabase.from("predictions").insert({
         user_id: user.id,
-
         prediction: result.prediction,
         confidence: result.confidence,
-
         low_probability: result.probabilities.Low,
         medium_probability: result.probabilities.Medium,
         high_probability: result.probabilities.High,
-
         age: Number(form.Age),
         study_hours: Number(form.Study_Hours),
         class_attendance: Number(form.Class_Attendance),
@@ -364,29 +738,36 @@ async function handleSave() {
         peer_pressure: Number(form.Peer_Pressure),
         family_support: Number(form.Family_Support),
         anxiety_level: Number(form.Anxiety_Level),
-
-        recommendations:
-          recommendation?.tips ?? [],
+        recommendations: recommendation?.tips ?? [],
       });
-
-    if (error) throw error;
-
-    setSaved(true);
-  } catch (err) {
-    console.error(err);
-    alert("Gagal menyimpan hasil.");
+      if (error) throw error;
+      setSaved(true);
+    } catch (err) {
+      console.error(err);
+      alert("Gagal menyimpan hasil.");
+    }
   }
-}
+
   // ── Field change ──────────────────────────────────────────────────────────────
   function handleChange(key: keyof FormState, value: string) {
-    // Allow only digits and optional leading minus
     const cleaned = value.replace(/[^0-9]/g, "");
     setForm((f) => ({ ...f, [key]: cleaned }));
     if (errors[key]) setErrors((e) => ({ ...e, [key]: "" }));
   }
 
+  function handleWheelChange(key: keyof FormState, value: string) {
+    setForm((f) => ({ ...f, [key]: value }));
+    if (errors[key]) setErrors((e) => ({ ...e, [key]: "" }));
+  }
+
+  function handleAttendanceChange(value: string) {
+    setForm((f) => ({ ...f, Class_Attendance: value }));
+    if (errors["Class_Attendance"]) setErrors((e) => ({ ...e, Class_Attendance: "" }));
+  }
+
   const c = result ? riskColor(result.prediction) : null;
 
+  // ── Render ────────────────────────────────────────────────────────────────────
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-4 md:p-8">
       {/* Header */}
@@ -396,49 +777,58 @@ async function handleSave() {
         </div>
         <h2 className="mt-3 font-display text-3xl font-bold">Prediksi Risiko Burnout</h2>
         <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-          Isi detail aktivitas harianmu di bawah ini. Kami akan menganalisis potensi tingkat
-          risiko burnout kamu berdasarkan 11 indikator aktivitas yang divalidasi secara ilmiah.
+          Isi detail aktivitas harianmu di bawah ini. Kami akan menganalisis potensi tingkat risiko
+          burnout kamu berdasarkan 11 indikator aktivitas yang divalidasi secara ilmiah.
         </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* ── Form ─────────────────────────────────────────────────────────── */}
+        {/* ── Form ──────────────────────────────────────────────────────────── */}
         <div className="space-y-4 rounded-3xl border border-border bg-surface p-6 shadow-soft">
           <div className="text-sm font-semibold text-muted-foreground">
             Data Mahasiswa ({FIELD_META.length} bidang)
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            {FIELD_META.map(({ key, label, min, max, hint, desc }) => (
-              <div key={key}>
-                <label className="block text-xs font-semibold text-foreground">
-                  {label}
-                  <span className="ml-1 text-muted-foreground font-normal">({hint})</span>
+            {FIELD_META.map((meta) => {
+              const { key, min, max } = meta;
+              const isWheel = WHEEL_KEYS.includes(key);
+              const isAttendance = key === ATTENDANCE_KEY;
 
-                  <span className="block mt-0.5 text-[10px] font-normal tracking-wide text-muted-foreground/60">
-                    {desc}
-                  </span>
-                </label>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={min}
-                  max={max}
-                  value={form[key]}
-                  onChange={(e) => handleChange(key, e.target.value)}
-                  placeholder={`${min}–${max}`}
-                  className={`mt-1.5 w-full rounded-xl border bg-background px-3 py-2 text-sm outline-none transition focus:border-primary ${
-                    errors[key] ? "border-danger" : "border-border"
-                  }`}
-                />
-                {errors[key] && (
-                  <p className="mt-1 flex items-center gap-1 text-xs text-danger">
-                    <AlertCircle className="h-3 w-3 flex-shrink-0" />
-                    {errors[key]}
-                  </p>
-                )}
-              </div>
-            ))}
+              return (
+                <FieldWrapper key={key} meta={meta} errorMsg={errors[key]}>
+                  {isAttendance ? (
+                    <AttendanceSlider
+                      value={form[key]}
+                      onChange={handleAttendanceChange}
+                      hasError={!!errors[key]}
+                    />
+                  ) : isWheel ? (
+                    <WheelPicker
+                      value={form[key]}
+                      min={min}
+                      max={max}
+                      onChange={(v) => handleWheelChange(key, v)}
+                      hasError={!!errors[key]}
+                    />
+                  ) : (
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={min}
+                      max={max}
+                      value={form[key]}
+                      onChange={(e) => handleChange(key, e.target.value)}
+                      placeholder={`${min}–${max}`}
+                      className={`mt-1.5 w-full rounded-xl border bg-background px-3 py-2 text-sm outline-none transition focus:border-primary ${
+                        errors[key] ? "border-danger" : "border-border"
+                      }`}
+                      style={{ height: "42px" }}
+                    />
+                  )}
+                </FieldWrapper>
+              );
+            })}
           </div>
 
           {/* API error */}
@@ -471,7 +861,7 @@ async function handleSave() {
           </p>
         </div>
 
-        {/* ── Result panel ─────────────────────────────────────────────────── */}
+        {/* ── Result panel ──────────────────────────────────────────────────── */}
         <div className="rounded-3xl border border-border bg-gradient-to-br from-primary-light via-surface to-mint/30 p-6 shadow-soft">
           <AnimatePresence mode="wait">
             {!result && !loading ? (
@@ -541,9 +931,7 @@ async function handleSave() {
                 {/* Confidence */}
                 <div className="rounded-2xl border border-border bg-surface/80 p-4 backdrop-blur">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-muted-foreground">
-                      Tingkat Kepercayaan
-                    </span>
+                    <span className="text-xs font-medium text-muted-foreground">Tingkat Kepercayaan</span>
                     <span className="font-display text-2xl font-bold">
                       {Math.round(result.confidence * 100)}%
                     </span>
@@ -560,9 +948,7 @@ async function handleSave() {
 
                 {/* Probability distribution */}
                 <div className="rounded-2xl border border-border bg-surface/80 p-4 backdrop-blur">
-                  <p className="mb-3 text-xs font-medium text-muted-foreground">
-                    Distribusi Probabilitas
-                  </p>
+                  <p className="mb-3 text-xs font-medium text-muted-foreground">Distribusi Probabilitas</p>
                   {(
                     [
                       { key: "Low", label: "Rendah", accent: "#22c55e" },
@@ -590,28 +976,22 @@ async function handleSave() {
                     );
                   })}
                 </div>
+
+                {/* Recommendations */}
                 {recommendation && (
-                <div className="rounded-2xl border border-border bg-surface/80 p-4 backdrop-blur">
-                    <h3 className="mb-3 font-semibold">
-                    Langkah Rekomendasi
-                    </h3>
-
-                    <p className="mb-4 text-sm text-muted-foreground">
-                    {recommendation.intro}
-                    </p>
-
+                  <div className="rounded-2xl border border-border bg-surface/80 p-4 backdrop-blur">
+                    <h3 className="mb-3 font-semibold">Langkah Rekomendasi</h3>
+                    <p className="mb-4 text-sm text-muted-foreground">{recommendation.intro}</p>
                     <ul className="space-y-2">
-                    {recommendation.tips.map((tip, index) => (
-                        <li
-                        key={index}
-                        className="rounded-xl bg-background p-3 text-sm"
-                        >
-                        • {tip}
+                      {recommendation.tips.map((tip, index) => (
+                        <li key={index} className="rounded-xl bg-background p-3 text-sm">
+                          • {tip}
                         </li>
-                    ))}
+                      ))}
                     </ul>
-                </div>
+                  </div>
                 )}
+
                 {/* Save button */}
                 {saved ? (
                   <div className="flex items-center justify-center gap-2 rounded-2xl border border-success/30 bg-success/10 py-3 text-sm font-semibold text-success">

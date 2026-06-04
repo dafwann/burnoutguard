@@ -348,8 +348,7 @@ export default function AboutPage() {
               </strong>{" "}
               yang mendorong mahasiswa mengambil langkah awal sebelum kondisinya
               memburuk, dengan memanfaatkan data gaya hidup sehari-hari yang
-              mudah diisi — tidur, screen time, aktivitas fisik, dan tingkat
-              stres.
+              mudah diisi — jam tidur, screen time, jam belajar, tingkat kecemasan dan lainnya.
             </p>
           </div>
         </motion.section>
