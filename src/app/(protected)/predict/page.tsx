@@ -407,78 +407,99 @@ function WheelPicker({
   hasError: boolean;
 }) {
   const items = Array.from({ length: max - min + 1 }, (_, i) => min + i);
-  const currentVal = value === "" ? min : Math.min(max, Math.max(min, parseInt(value, 10)));
-  const currentIndex = currentVal - min;
 
   const ITEM_W = 44;
-  const containerRef = useRef<HTMLDivElement>(null);
+
   const isDragging = useRef(false);
   const startX = useRef(0);
-  const startIndex = useRef(currentIndex);
-  const motionX = useMotionValue(-currentIndex * ITEM_W);
-  const snapTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const startIndex = useRef(0);
 
-  // Keep motion in sync with external value changes
+  const motionX = useMotionValue(0);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const currentVal =
+    value === ""
+      ? min
+      : Math.min(max, Math.max(min, parseInt(value, 10)));
+
+  const currentIndex = currentVal - min;
+
   useEffect(() => {
     if (!isDragging.current) {
-      animate(motionX, -currentIndex * ITEM_W, { type: "spring", stiffness: 300, damping: 30 });
+      const x = -currentIndex * ITEM_W;
+      motionX.set(x);
+      setActiveIndex(currentIndex);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex]);
 
-  function snapToIndex(idx: number) {
-    const clamped = Math.max(0, Math.min(items.length - 1, idx));
-    onChange(String(items[clamped]));
-    animate(motionX, -clamped * ITEM_W, { type: "spring", stiffness: 320, damping: 32 });
+  function clamp(val: number, min: number, max: number) {
+    return Math.max(min, Math.min(max, val));
   }
 
-  // Pointer events for drag
+  function getIndexFromX(x: number) {
+    const rawIndex = Math.round(-x / ITEM_W);
+    return clamp(rawIndex, 0, items.length - 1);
+  }
+
+  function snapToIndex(idx: number) {
+    const clamped = clamp(idx, 0, items.length - 1);
+
+    onChange(String(items[clamped]));
+
+    animate(motionX, -clamped * ITEM_W, {
+      type: "spring",
+      stiffness: 320,
+      damping: 32,
+    });
+
+    setActiveIndex(clamped);
+  }
+
   function onPointerDown(e: React.PointerEvent) {
     isDragging.current = true;
+
     startX.current = e.clientX;
-    startIndex.current = currentIndex;
+    startIndex.current = getIndexFromX(motionX.get());
+
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    if (snapTimeout.current) clearTimeout(snapTimeout.current);
   }
 
   function onPointerMove(e: React.PointerEvent) {
     if (!isDragging.current) return;
+
     const delta = e.clientX - startX.current;
-    const newX = -startIndex.current * ITEM_W + delta;
-    motionX.set(newX);
+
+    const rawX = -startIndex.current * ITEM_W + delta;
+
+    const minX = -(items.length - 1) * ITEM_W;
+    const maxX = 0;
+
+    motionX.set(clamp(rawX, minX, maxX));
+
+    const newIndex = getIndexFromX(rawX);
+
+    if (newIndex !== activeIndex) {
+      setActiveIndex(newIndex);
+    }
   }
 
   function onPointerUp(e: React.PointerEvent) {
     if (!isDragging.current) return;
+
     isDragging.current = false;
-    const delta = e.clientX - startX.current;
-    const indexDelta = -Math.round(delta / ITEM_W);
-    snapToIndex(startIndex.current + indexDelta);
+
+    const finalX = motionX.get();
+
+    const index = getIndexFromX(finalX);
+
+    snapToIndex(index);
   }
 
   function onItemClick(idx: number) {
     snapToIndex(idx);
-  }
-
-  // Touch support
-  const touchStartX = useRef(0);
-  function onTouchStart(e: React.TouchEvent) {
-    isDragging.current = true;
-    touchStartX.current = e.touches[0].clientX;
-    startIndex.current = currentIndex;
-  }
-  function onTouchMove(e: React.TouchEvent) {
-    if (!isDragging.current) return;
-    const delta = e.touches[0].clientX - touchStartX.current;
-    const newX = -startIndex.current * ITEM_W + delta;
-    motionX.set(newX);
-  }
-  function onTouchEnd(e: React.TouchEvent) {
-    if (!isDragging.current) return;
-    isDragging.current = false;
-    const delta = e.changedTouches[0].clientX - touchStartX.current;
-    const indexDelta = -Math.round(delta / ITEM_W);
-    snapToIndex(startIndex.current + indexDelta);
   }
 
   return (
@@ -489,35 +510,45 @@ function WheelPicker({
       }`}
       style={{ height: "42px", position: "relative" }}
     >
-      {/* Center highlight */}
+      {/* CENTER HIGHLIGHT (lebih soft + rounded seperti awal) */}
       <div
-        className="absolute inset-y-0 left-1/2 -translate-x-1/2 pointer-events-none z-0 rounded-lg"
+        className="absolute inset-y-0 left-1/2 -translate-x-1/2 pointer-events-none z-0"
         style={{
           width: ITEM_W,
-          background: "var(--primary-light)",
-          border: "1.5px solid color-mix(in oklab, var(--primary) 40%, transparent)",
+          background: "color-mix(in oklab, var(--primary) 10%, transparent)",
+          border:
+            "1px solid color-mix(in oklab, var(--primary) 25%, transparent)",
+          borderRadius: 12, // 🔥 lebih rounded (pill feel)
         }}
       />
-      {/* Left / right fade */}
+
+      {/* fade */}
       <div
         className="absolute inset-y-0 left-0 pointer-events-none z-20"
-        style={{ width: 48, background: "linear-gradient(to right, var(--background) 60%, transparent)" }}
-      />
-      <div
-        className="absolute inset-y-0 right-0 pointer-events-none z-20"
-        style={{ width: 48, background: "linear-gradient(to left, var(--background) 60%, transparent)" }}
+        style={{
+          width: 48,
+          background:
+            "linear-gradient(to right, var(--background) 60%, transparent)",
+        }}
       />
 
-      {/* Track */}
       <div
-        className="absolute inset-0 flex items-center cursor-grab  z-10"
+        className="absolute inset-y-0 right-0 pointer-events-none z-20"
+        style={{
+          width: 48,
+          background:
+            "linear-gradient(to left, var(--background) 60%, transparent)",
+        }}
+      />
+
+      {/* TRACK */}
+      <div
+        className="absolute inset-0 flex items-center cursor-grab z-10"
+        style={{ touchAction: "none" }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
       >
         <motion.div
           className="flex items-center"
@@ -528,29 +559,45 @@ function WheelPicker({
           }}
         >
           {items.map((item, idx) => {
-            const dist = Math.abs(idx - currentIndex);
-            const isActive = dist === 0;
-            const scale = isActive ? 1 : dist === 1 ? 0.8 : 0.65;
-            const opacity = isActive ? 1 : dist === 1 ? 0.55 : dist === 2 ? 0.3 : 0.15;
+            const dist = Math.abs(idx - activeIndex);
+            const isActive = idx === activeIndex;
+
+            const scale = isActive ? 1.03 : dist === 1 ? 0.92 : 0.8;
+
+            const opacity =
+              isActive ? 1 : dist === 1 ? 0.7 : dist === 2 ? 0.45 : 0.25;
 
             return (
               <motion.button
                 key={item}
                 type="button"
                 onClick={() => onItemClick(idx)}
-                className="flex-shrink-0 flex items-center justify-center font-bold tabular-nums transition-colors"
+                className="flex-shrink-0 flex items-center justify-center tabular-nums"
                 style={{
                   width: ITEM_W,
                   height: 42,
-                  fontSize: isActive ? 17 : 13,
-                  color: isActive ? "var(--primary)" : "var(--muted-foreground)",
-                  fontWeight: isActive ? 700 : 500,
+
+                  // 🔥 FONT LEBIH KECIL + CLEAN
+                  fontSize: isActive ? 15 : 12,
+
+                  color: isActive
+                    ? "color-mix(in oklab, var(--primary) 80%, var(--foreground))"
+                    : "var(--muted-foreground)",
+
+                  // 🔥 bold tetap tapi tidak terlalu “keras”
+                  fontWeight: isActive ? 600 : 500,
+
+                  letterSpacing: isActive ? "-0.01em" : "0em",
+
                   scale,
                   opacity,
-                  pointerEvents: "auto",
                 }}
                 animate={{ scale, opacity }}
-                transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 380,
+                  damping: 30,
+                }}
               >
                 {item}
               </motion.button>
